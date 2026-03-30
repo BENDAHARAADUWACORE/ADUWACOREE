@@ -20,16 +20,8 @@
         .status-pill { padding: 4px 10px; border-radius: 99px; font-size: 8px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
         .stats-card { background: white; border-radius: 24px; padding: 20px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); text-align: center; border-bottom: 4px solid transparent; }
         
-        .responsive-header {
-            width: 100%;
-            aspect-ratio: 16 / 7;
-            position: relative;
-            overflow: hidden;
-            border-radius: 32px;
-        }
-        @media (max-width: 640px) {
-            .responsive-header { aspect-ratio: 4 / 3; }
-        }
+        .responsive-header { width: 100%; aspect-ratio: 16 / 7; position: relative; overflow: hidden; border-radius: 32px; }
+        @media (max-width: 640px) { .responsive-header { aspect-ratio: 4 / 3; } }
     </style>
 </head>
 <body class="pb-24">
@@ -101,11 +93,10 @@
         <section id="bendaharaSection" class="hidden grid md:grid-cols-2 gap-6 mb-12">
             <div class="bg-blue-50/50 p-6 rounded-3xl border border-blue-100">
                 <h4 class="font-black text-blue-700 text-[10px] uppercase mb-4 italic text-center">Tambah Pemasukan</h4>
-                <input type="text" id="InKet" placeholder="Keterangan (Contoh: Sisa Kas Lama)" class="input-clean mb-3">
+                <input type="text" id="InKet" placeholder="Keterangan" class="input-clean mb-3">
                 <input type="number" id="InNom" placeholder="Nominal" class="input-clean mb-4" onblur="autoKilo(this)">
                 <button onclick="saveTransaction('PEMASUKAN')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl text-[10px] uppercase">Simpan Pemasukan</button>
             </div>
-            
             <div class="bg-rose-50/50 p-6 rounded-3xl border border-rose-100">
                 <h4 class="font-black text-rose-700 text-[10px] uppercase mb-4 italic text-center">Tambah Pengeluaran</h4>
                 <div class="flex gap-2 mb-3">
@@ -138,7 +129,8 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_nGG-LcM9S2S5N4qU0GAdgNgIFiNDnaDdVl-d7tqgvlXcv7pZrApDdVZIOKYLK_6i7g/exec";
+        // PASTIKAN URL INI ADALAH URL DEPLOYMENT TERBARU (WEB APP)
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynW0zvLmXATyfqzunbZ90_P2IRAu0V6VPFt-RqVwlwkV1dTVPe839YcGhhe_U64ltWhg/exec";
         const PASS_ADMIN = "12345678"; 
         const bulan = ["Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
         
@@ -216,7 +208,7 @@
         }
 
         async function saveTransaction(tipe) {
-            let ket = ""; let total = 0; let imgUrl = "#";
+            let ket = ""; let total = 0; let imgData = "#";
             const now = new Date();
             document.getElementById('loadingOverlay').style.display = 'flex';
             
@@ -235,12 +227,15 @@
                         total += (parseFloat(qtys[i].value) * parseFloat(prices[i].value)); 
                     }
                     ket = details.join(", ");
+
+                    // PROSES FOTO AUTO (BASE64)
                     const fileInput = document.getElementById('pengeluaranFoto');
                     if(fileInput && fileInput.files[0]) {
-                        const file = fileInput.files[0];
-                        const base64 = await new Promise((res) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.readAsDataURL(file); });
-                        const upload = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ type: "FILE_UPLOAD", fileName: `Nota_${Date.now()}`, mimeType: file.type, base64 }) });
-                        imgUrl = await upload.text();
+                        imgData = await new Promise((res) => { 
+                            const r = new FileReader(); 
+                            r.onload = (e) => res(e.target.result); 
+                            r.readAsDataURL(fileInput.files[0]); 
+                        });
                     }
                 }
 
@@ -252,20 +247,21 @@
                     ket: ket.toUpperCase(), 
                     nom: total, 
                     tipe: tipe, 
-                    bukti: imgUrl 
+                    bukti: imgData 
                 });
 
                 await syncToGoogle();
-                
-                // Reset Forms
-                document.getElementById('InKet').value = ""; 
-                document.getElementById('InNom').value = ""; 
-                document.getElementById('itemCount').value = "";
-                document.getElementById('itemInputsContainer').classList.add('hidden');
                 alert("Data " + tipe + " berhasil dicatat!");
+                location.reload();
 
             } catch(e) { alert("Error: " + e.message); } 
             finally { document.getElementById('loadingOverlay').style.display = 'none'; }
+        }
+
+        function openNota(base64) {
+            if (!base64 || base64 === "#") return alert("Tidak ada nota.");
+            const win = window.open();
+            win.document.write(`<html><body style="margin:0;display:flex;align-items:center;justify-content:center;background:#000"><img src="${base64}" style="max-width:100%;max-height:100vh"></body></html>`);
         }
 
         function render() {
@@ -291,7 +287,7 @@
                     <td><span class="status-pill ${t.tipe==='PEMASUKAN'?'bg-emerald-100 text-emerald-600':'bg-rose-100 text-rose-600'}">${t.tipe}</span></td>
                     <td class="text-right font-black">Rp ${t.nom.toLocaleString()}</td>
                     <td class="text-center p-4">
-                        ${t.bukti!=='#'?`<a href="${t.bukti}" target="_blank" class="bg-blue-600 text-white px-2 py-1 rounded text-[8px] uppercase">Nota</a>`:''} 
+                        ${t.bukti!=='#'?`<button onclick="openNota('${t.bukti}')" class="bg-blue-600 text-white px-2 py-1 rounded text-[8px] uppercase">Nota</button>`:''} 
                         ${isEditMode?`<button onclick="deleteTrx(${t.id})" class="ml-2">🗑️</button>`:''}
                     </td>
                 </tr>`;
