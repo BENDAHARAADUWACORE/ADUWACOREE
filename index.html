@@ -201,7 +201,7 @@
         // AUTO KILO LOGIC (SMART)
         function autoKilo(el) { 
             let val = parseFloat(el.value);
-            if(val && val < 10000) { 
+            if(val && val < 100000000) { 
                 el.value = val * 1000; 
                 calcTotal(); 
             } 
