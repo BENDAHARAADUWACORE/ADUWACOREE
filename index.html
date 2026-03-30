@@ -348,4 +348,20 @@
         }
         
         function cetakLaporan() { 
-            const { jsPDF } = wind
+            const { jsPDF } = window.jspdf; 
+            const doc = new jsPDF(); 
+            doc.text("LAPORAN KEUANGAN ADUWACORE", 10, 10); 
+            doc.autoTable({ head: [['Tgl', 'Ket', 'Tipe', 'Nominal']], body: allTransactions.map(t => [t.tgl, t.ket, t.tipe, t.nom.toLocaleString()]) }); 
+            doc.save("Laporan_Kas.pdf"); 
+        }
+
+        window.onload = function() {
+            loadFromGoogle();
+            if(localStorage.getItem("aduwacore_admin") === "true") {
+                isEditMode = true;
+                showAdminUI();
+            }
+        };
+    </script>
+</body>
+</html>
