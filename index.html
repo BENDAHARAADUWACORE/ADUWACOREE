@@ -102,14 +102,14 @@
         <section id="bendaharaSection" class="hidden grid md:grid-cols-2 gap-6 mb-12">
             <div class="bg-blue-50/50 p-6 rounded-3xl border border-blue-100">
                 <h4 class="font-black text-blue-700 text-[10px] uppercase mb-4 italic text-center">Pemasukan Lainnya</h4>
-                <input type="text" id="pemasukanKet" placeholder="Keterangan" class="input-clean mb-3">
-                <input type="number" id="pemasukanNom" placeholder="Nominal" class="input-clean mb-4" onblur="autoKilo(this)">
+                <input type="text" id="InKet" placeholder="Keterangan" class="input-clean mb-3">
+                <input type="number" id="InNom" placeholder="Nominal" class="input-clean mb-4" onblur="autoKilo(this)">
                 <button onclick="saveTransaction('Pemasukan')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl text-[10px] uppercase">Simpan</button>
             </div>
             <div class="bg-rose-50/50 p-6 rounded-3xl border border-rose-100">
                 <h4 class="font-black text-rose-700 text-[10px] uppercase mb-4 italic text-center">pengeluaran Keuangan</h4>
                 <div class="flex gap-2 mb-3">
-                    <input type="number" id="itemCount" placeholder="Jenis" class="input-clean w-24">
+                    <input type="number" id="itemCount" placeholder="Jumlah" class="input-clean w-24">
                     <button onclick="generateItemInputs()" class="bg-slate-800 text-white px-4 rounded-xl text-[10px] font-bold">SET FORM</button>
                 </div>
                 <div id="itemInputsContainer" class="hidden space-y-3">
