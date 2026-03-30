@@ -33,13 +33,15 @@
 
     <nav class="fixed top-0 w-full z-50 glass border-b px-6 py-4 flex justify-between items-center">
         <div class="font-black text-xl italic uppercase tracking-tighter text-slate-800">ADUWA<span class="text-rose-600">CORE</span></div>
+        
         <div id="loginArea" class="flex gap-2">
             <input type="password" id="passInput" placeholder="Sandi" class="text-[10px] border rounded-lg px-3 py-2 w-24">
             <button onclick="login()" class="bg-slate-900 text-white text-[10px] px-4 py-2 rounded-lg font-bold uppercase">Login</button>
         </div>
+
         <div id="logoutArea" class="hidden flex items-center gap-4">
-            <span class="text-[9px] font-black text-rose-500 italic uppercase">Bendahara Active</span>
-            <button onclick="logout()" class="text-slate-400 text-[10px] underline uppercase">Logout</button>
+            <span class="text-[9px] font-black text-rose-500 italic uppercase underline decoration-2">Bendahara Mode</span>
+            <button onclick="logout()" class="bg-rose-600 text-white text-[9px] px-3 py-1.5 rounded-full font-black uppercase shadow-lg shadow-rose-200">Logout</button>
         </div>
     </nav>
 
@@ -76,7 +78,7 @@
                 <h4 class="font-black text-blue-700 text-[10px] uppercase mb-5 italic text-center">Tambah Pemasukan</h4>
                 <input type="text" id="InKet" placeholder="Keterangan" class="input-clean mb-4">
                 <input type="number" id="InNom" placeholder="Nominal" class="input-clean mb-5" onblur="autoKilo(this)">
-                <button onclick="saveTransaction('PEMASUKAN')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl text-[10px] uppercase">Simpan Pemasukan</button>
+                <button onclick="saveTransaction('PEMASUKAN')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl text-[10px] uppercase shadow-lg shadow-blue-200">Simpan Pemasukan</button>
             </div>
             
             <div class="bg-rose-50/50 p-6 rounded-3xl border border-rose-100">
@@ -89,7 +91,7 @@
                     <div id="itemRows" class="space-y-2"></div>
                     <div class="text-right font-black text-rose-600 text-xl py-2" id="liveTotal">Rp 0</div>
                     <input type="file" id="pengeluaranFoto" accept="image/*" class="w-full text-[10px] bg-white p-2 rounded-lg border">
-                    <button onclick="saveTransaction('PENGELUARAN')" class="w-full bg-rose-600 text-white font-bold py-3 rounded-xl text-[10px] uppercase shadow-lg">Posting Pengeluaran</button>
+                    <button onclick="saveTransaction('PENGELUARAN')" class="w-full bg-rose-600 text-white font-bold py-3 rounded-xl text-[10px] uppercase shadow-lg shadow-rose-200">Posting Pengeluaran</button>
                 </div>
             </div>
         </section>
@@ -130,7 +132,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynW0zvLmXATyfqzunbZ90_P2IRAu0V6VPFt-RqVwlwkV1dTVPe839YcGhhe_U64ltWhg/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwZmgBfvKJ4edw2xmkJHgmS8l6XPWNxV20NzebZqX15Pq5LeiBhC5qKO25q20rdAiTnXw/exec";
         const PASS_ADMIN = "12345678"; 
         const bulan = ["Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
         
@@ -148,6 +150,7 @@
         };
         let allTransactions = [];
 
+        // LOAD DATA
         async function loadFromGoogle() {
             try {
                 const res = await fetch(SCRIPT_URL);
@@ -157,10 +160,13 @@
                     allTransactions = JSON.parse(json[1][1]);
                 }
                 document.getElementById('syncStatus').innerText = "LIVE SYNC";
-            } catch(e) { document.getElementById('syncStatus').innerText = "OFFLINE"; }
+            } catch(e) { 
+                document.getElementById('syncStatus').innerText = "OFFLINE"; 
+            }
             render();
         }
 
+        // SYNC DATA (Hanya dipanggil setelah klik save/edit)
         async function syncToGoogle() {
             document.getElementById('syncStatus').innerText = "SYNCING...";
             try {
@@ -169,12 +175,11 @@
                 document.getElementById('syncStatus').innerText = "SAVED";
             } catch(e) { 
                 document.getElementById('syncStatus').innerText = "FAILED"; 
-                alert("Gagal Sinkron ke Google!");
+                alert("Gagal menyimpan ke Database!");
             }
-            render();
         }
 
-        // LOGIN & STAY LOGIN LOGIC
+        // LOGIN SYSTEM
         function login() { 
             const pass = document.getElementById('passInput').value;
             if(pass === PASS_ADMIN) { 
@@ -192,21 +197,21 @@
         }
 
         function logout() { 
-            if(confirm("Yakin ingin Logout? Sesi login akan dihapus.")) {
+            if(confirm("Yakin ingin Logout manual? Tombol input akan disembunyikan.")) {
                 localStorage.removeItem("aduwacore_admin");
                 location.reload(); 
             }
         }
 
-        // AUTO KILO LOGIC (SMART)
-function autoKilo(el) { 
-    let val = parseFloat(el.value);
-    if(val) { 
-        // Tanpa syarat minimal, berapapun angkanya langsung dikali 1000
-        el.value = val * 1000; 
-        calcTotal(); 
-    } 
-}
+        // LOGIKA AUTO KILO
+        function autoKilo(el) { 
+            let val = parseFloat(el.value);
+            if(!isNaN(val) && val !== 0) { 
+                el.value = val * 1000; 
+                calcTotal(); 
+            } 
+        }
+
         function generateItemInputs() {
             const count = document.getElementById('itemCount').value;
             const body = document.getElementById('itemRows'); body.innerHTML = '';
@@ -229,6 +234,7 @@ function autoKilo(el) {
             return t;
         }
 
+        // SAVE TRANSACTION
         async function saveTransaction(tipe) {
             let ket = ""; let total = 0; let imgData = "#";
             const now = new Date();
@@ -249,7 +255,6 @@ function autoKilo(el) {
                         total += (parseFloat(qtys[i].value) * parseFloat(prices[i].value)); 
                     }
                     ket = details.join(", ");
-                    
                     const fileInput = document.getElementById('pengeluaranFoto');
                     if(fileInput && fileInput.files[0]) {
                         imgData = await new Promise((res) => { 
@@ -261,24 +266,21 @@ function autoKilo(el) {
                 }
 
                 if(!ket || !total) throw new Error("Lengkapi data!");
-
-                allTransactions.unshift({ 
-                    id: Date.now(), 
-                    tgl: now.toLocaleDateString('id-ID'), 
-                    ket: ket.toUpperCase(), 
-                    nom: total, 
-                    tipe: tipe, 
-                    bukti: imgData 
-                });
-
-                await syncToGoogle();
-                alert("Data Berhasil Dicatat!");
-                document.getElementById('InKet').value = "";
-                document.getElementById('InNom').value = "";
-                document.getElementById('itemInputsContainer').classList.add('hidden');
-
-            } catch(e) { alert("Error: " + e.message); } 
+                
+                allTransactions.unshift({ id: Date.now(), tgl: now.toLocaleDateString('id-ID'), ket: ket.toUpperCase(), nom: total, tipe: tipe, bukti: imgData });
+                
+                await syncToGoogle(); // Auto Save HANYA SETELAH Tombol diklik
+                alert("Berhasil di-upload!");
+                location.reload();
+            } catch(e) { alert(e.message); } 
             finally { document.getElementById('loadingOverlay').style.display = 'none'; }
+        }
+
+        // UPDATE CHECKBOX KAS
+        async function updateKas(nama, bl, stat) {
+            dataKas[nama][bl] = stat;
+            render(); // Update tampilan lokal dulu biar cepat
+            await syncToGoogle(); // Baru save ke server
         }
 
         function render() {
@@ -289,7 +291,7 @@ function autoKilo(el) {
                 bulan.forEach(bl => {
                     const ck = dataKas[n][bl] ? 'checked' : ''; 
                     if(dataKas[n][bl]) tKas += 15000;
-                    r += `<td class="text-center"><input type="checkbox" ${ck} ${isEditMode?'':'disabled'} onchange="dataKas['${n}']['${bl}']=this.checked; syncToGoogle();"></td>`;
+                    r += `<td class="text-center"><input type="checkbox" ${ck} ${isEditMode?'':'disabled'} onchange="updateKas('${n}', '${bl}', this.checked)"></td>`;
                 });
                 b.innerHTML += r + "</tr>";
             });
@@ -309,7 +311,6 @@ function autoKilo(el) {
                     </td>
                 </tr>`;
             });
-
             document.getElementById('totalInKas').innerText = `Rp ${tKas.toLocaleString()}`;
             document.getElementById('totalLain').innerText = `Rp ${tLain.toLocaleString()}`;
             document.getElementById('totalOut').innerText = `Rp ${tOut.toLocaleString()}`;
@@ -321,21 +322,26 @@ function autoKilo(el) {
             win.document.write(`<html><body style="margin:0;display:flex;align-items:center;justify-content:center;background:#000"><img src="${base64}" style="max-width:100%;max-height:100vh"></body></html>`);
         }
 
-        function deleteTrx(id) { if(confirm("Hapus?")) { allTransactions = allTransactions.filter(t => t.id !== id); syncToGoogle(); } }
+        async function deleteTrx(id) { 
+            if(confirm("Hapus transaksi ini permanen?")) { 
+                allTransactions = allTransactions.filter(t => t.id !== id); 
+                render();
+                await syncToGoogle(); 
+            } 
+        }
         
         function cetakLaporan() { 
             const { jsPDF } = window.jspdf; 
             const doc = new jsPDF(); 
             doc.text("LAPORAN KEUANGAN ADUWACORE", 10, 10); 
-            doc.autoTable({ 
-                head: [['Tgl', 'Ket', 'Tipe', 'Nominal']], 
-                body: allTransactions.map(t => [t.tgl, t.ket, t.tipe, t.nom.toLocaleString()]) 
-            }); 
+            doc.autoTable({ head: [['Tgl', 'Ket', 'Tipe', 'Nominal']], body: allTransactions.map(t => [t.tgl, t.ket, t.tipe, t.nom.toLocaleString()]) }); 
             doc.save("Laporan_Kas.pdf"); 
         }
 
+        // INISIALISASI
         window.onload = function() {
             loadFromGoogle();
+            // Cek apakah user sebelumnya sudah login
             if(localStorage.getItem("aduwacore_admin") === "true") {
                 isEditMode = true;
                 showAdminUI();
