@@ -130,7 +130,6 @@
     </div>
 
     <script>
-        // GANTI INI DENGAN URL WEB APP KAMU!
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynW0zvLmXATyfqzunbZ90_P2IRAu0V6VPFt-RqVwlwkV1dTVPe839YcGhhe_U64ltWhg/exec";
         const PASS_ADMIN = "12345678"; 
         const bulan = ["Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
@@ -149,7 +148,6 @@
         };
         let allTransactions = [];
 
-        // LOAD DATA AWAL
         async function loadFromGoogle() {
             try {
                 const res = await fetch(SCRIPT_URL);
@@ -163,7 +161,6 @@
             render();
         }
 
-        // SYNC DATA KE GOOGLE
         async function syncToGoogle() {
             document.getElementById('syncStatus').innerText = "SYNCING...";
             try {
@@ -177,12 +174,12 @@
             render();
         }
 
-        // LOGIN & SESSION LOGIC
+        // LOGIN & STAY LOGIN LOGIC
         function login() { 
             const pass = document.getElementById('passInput').value;
             if(pass === PASS_ADMIN) { 
                 isEditMode = true; 
-                localStorage.setItem("aduwacore_admin", "true"); // Simpan status login
+                localStorage.setItem("aduwacore_admin", "true"); 
                 showAdminUI();
                 render(); 
             } else { alert("Sandi Salah!"); }
@@ -195,13 +192,21 @@
         }
 
         function logout() { 
-            if(confirm("Yakin ingin Logout?")) {
+            if(confirm("Yakin ingin Logout? Sesi login akan dihapus.")) {
                 localStorage.removeItem("aduwacore_admin");
                 location.reload(); 
             }
         }
 
-        // PENGELUARAN LOGIC
+        // AUTO KILO LOGIC (SMART)
+        function autoKilo(el) { 
+            let val = parseFloat(el.value);
+            if(val && val < 10000) { 
+                el.value = val * 1000; 
+                calcTotal(); 
+            } 
+        }
+
         function generateItemInputs() {
             const count = document.getElementById('itemCount').value;
             const body = document.getElementById('itemRows'); body.innerHTML = '';
@@ -224,9 +229,6 @@
             return t;
         }
 
-        function autoKilo(el) { if(el.value && el.value.length <= 3) { el.value = el.value * 1000; calcTotal(); } }
-
-        // SAVE TRANSACTION (WITH PHOTO BASE64)
         async function saveTransaction(tipe) {
             let ket = ""; let total = 0; let imgData = "#";
             const now = new Date();
@@ -271,7 +273,6 @@
 
                 await syncToGoogle();
                 alert("Data Berhasil Dicatat!");
-                // Tidak perlu reload, panggil render saja biar tetep login
                 document.getElementById('InKet').value = "";
                 document.getElementById('InNom').value = "";
                 document.getElementById('itemInputsContainer').classList.add('hidden');
@@ -280,7 +281,6 @@
             finally { document.getElementById('loadingOverlay').style.display = 'none'; }
         }
 
-        // RENDER UI
         function render() {
             const b = document.getElementById('tableBody'); b.innerHTML = '';
             let tKas = 0;
@@ -334,7 +334,6 @@
             doc.save("Laporan_Kas.pdf"); 
         }
 
-        // BOOTSTRAP
         window.onload = function() {
             loadFromGoogle();
             if(localStorage.getItem("aduwacore_admin") === "true") {
