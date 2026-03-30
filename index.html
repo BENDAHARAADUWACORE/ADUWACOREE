@@ -52,7 +52,7 @@
     <div class="w-full pt-24">
         <div class="max-w-7xl mx-auto px-4">
             <div class="relative h-auto w-full overflow-hidden rounded-[40px] shadow-2xl bg-slate-800 border-4 border-white">
-               <img src="https://lh3.googleusercontent.com/d/142g4SDTwsC_DspU_0lPZU54bq1_NpIr1" class="w-full h-auto block opacity-100" alt="Foto Kelas Aduwacore">
+               <img src="https://i.ibb.co/vz6Yf2x/header-aduwa.jpg" class="w-full h-auto block opacity-100" alt="Foto Kelas Aduwacore">
                  <div class="absolute inset-0 flex flex-col justify-end p-6 md:p-10 pb-16 bg-gradient-to-t from-black/80 via-black/10 to-transparent">
                     <h1 class="text-white text-5xl md:text-7xl font-extrabold italic uppercase leading-none tracking-tighter text-shadow-strong">
                         Aduwacore <br><span class="text-rose-500">Finance.</span>
@@ -125,7 +125,7 @@
                         </table>
                     </div>
                     <h3 class="font-black text-rose-600 text-center text-2xl" id="liveTotal">Rp 0</h3>
-                    <p class="text-[9px] font-bold text-slate-500 uppercase italic">Unggah Bukti Nota:</p>
+                    <p class="text-[9px] font-bold text-slate-500 uppercase italic">Unggah Bukti Nota (GDrive):</p>
                     <input type="file" id="outFoto" accept="image/*" class="w-full text-[10px] bg-white p-3 rounded-xl border border-rose-200">
                     <button id="btnPosting" onclick="saveTransaction('OUT')" class="w-full bg-rose-600 text-white font-black py-4 rounded-2xl text-[10px] uppercase shadow-xl hover:bg-rose-700 transition-all tracking-widest">Update Jurnal & Sync</button>
                 </div>
@@ -155,8 +155,7 @@
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBca3vUiqLavUGVw9YKMyClS7pNMNfCc1Kk7lVnjF96X8Uws3FUhAu1A7gLJSjCXXOFw/exec";
-        const IMGBB_API_KEY = "e429d3d33f9cf6d1223705164fece855";
-        const PASS_ADMIN = "12345678"; // Sebaiknya simpan di server jika ingin aman
+        const PASS_ADMIN = "12345678"; 
         
         let isEditMode = false;
         let syncTimeout;
@@ -188,7 +187,6 @@
             render();
         }
 
-        // Fungsi Debounce agar tidak spam server saat mencentang banyak
         function debouncedSync() {
             clearTimeout(syncTimeout);
             document.getElementById('syncStatus').innerText = "⏳ Menunggu selesai...";
@@ -270,84 +268,82 @@
             return total;
         }
 
-async function saveTransaction(tipe) {
-    let ket = "", total = 0, imgUrl = "#";
-    const now = new Date();
-    const jam = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
-    
-    document.getElementById('loadingOverlay').style.display = 'flex';
+        // --- FUNGSI SAVE DENGAN UPLOAD GOOGLE DRIVE ---
+        async function saveTransaction(tipe) {
+            let ket = "", total = 0, imgUrl = "#";
+            const now = new Date();
+            const jam = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+            
+            document.getElementById('loadingOverlay').style.display = 'flex';
 
-    try {
-        if(tipe === 'IN') {
-            ket = document.getElementById('inKet').value;
-            total = parseInt(document.getElementById('inNom').value);
-        } else {
-            const names = document.getElementsByClassName('item-name');
-            const qtys = document.getElementsByClassName('item-qty');
-            const prices = document.getElementsByClassName('item-price');
-            let details = [];
-            for(let i=0; i<names.length; i++) {
-                if(!names[i].value) continue;
-                details.push(`${names[i].value} (${qtys[i].value}x)`);
-                total += (qtys[i].value * prices[i].value);
-            }
-            ket = details.join(", ");
+            try {
+                if(tipe === 'IN') {
+                    ket = document.getElementById('inKet').value;
+                    total = parseInt(document.getElementById('inNom').value);
+                } else {
+                    const names = document.getElementsByClassName('item-name');
+                    const qtys = document.getElementsByClassName('item-qty');
+                    const prices = document.getElementsByClassName('item-price');
+                    let details = [];
+                    for(let i=0; i<names.length; i++) {
+                        if(!names[i].value) continue;
+                        details.push(`${names[i].value} (${qtys[i].value}x)`);
+                        total += (qtys[i].value * prices[i].value);
+                    }
+                    ket = details.join(", ");
 
-            // --- BAGIAN UPLOAD AMAN KE GOOGLE DRIVE ---
-            const file = document.getElementById('outFoto').files[0];
-            if(file) {
-                const reader = new FileReader();
-                const filePromise = new Promise((resolve, reject) => {
-                    reader.onload = async (e) => {
-                        try {
-                            const base64 = e.target.result.split(',')[1];
-                            const response = await fetch(SCRIPT_URL, {
-                                method: "POST",
-                                body: JSON.stringify({
-                                    type: "FILE_UPLOAD",
-                                    fileName: "Nota_" + Date.now() + "_" + file.name,
-                                    mimeType: file.type,
-                                    base64: base64
-                                })
-                            });
-                            imgUrl = await response.text(); // Ini akan berisi Link Google Drive
-                            resolve();
-                        } catch (err) { reject(err); }
-                    };
-                    reader.readAsDataURL(file);
+                    // PROSES UPLOAD KE GOOGLE DRIVE
+                    const file = document.getElementById('outFoto').files[0];
+                    if(file) {
+                        const reader = new FileReader();
+                        const filePromise = new Promise((resolve, reject) => {
+                            reader.onload = async (e) => {
+                                try {
+                                    const base64 = e.target.result.split(',')[1];
+                                    const response = await fetch(SCRIPT_URL, {
+                                        method: "POST",
+                                        body: JSON.stringify({
+                                            type: "FILE_UPLOAD",
+                                            fileName: "Nota_" + Date.now() + "_" + file.name,
+                                            mimeType: file.type,
+                                            base64: base64
+                                        })
+                                    });
+                                    imgUrl = await response.text(); 
+                                    resolve();
+                                } catch (err) { reject(err); }
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                        await filePromise;
+                    }
+                }
+
+                if(!ket || !total) throw new Error("Data Kosong");
+
+                allTransactions.unshift({ 
+                    id: Date.now(),
+                    tgl: now.toLocaleDateString('id-ID'), 
+                    jam: jam, 
+                    ket: ket.toUpperCase(), 
+                    nom: total, 
+                    tipe, 
+                    bukti: imgUrl 
                 });
-                await filePromise;
+
+                await syncToGoogle();
+                
+                document.getElementById('inKet').value = ""; 
+                document.getElementById('inNom').value = "";
+                document.getElementById('itemInputsContainer').classList.add('hidden');
+                alert("Transaksi Berhasil Tersimpan!");
+
+            } catch(e) {
+                alert("Gagal: " + e.message);
+            } finally {
+                document.getElementById('loadingOverlay').style.display = 'none';
             }
         }
-
-        if(!ket || !total) throw new Error("Data Kosong");
-
-        // Masukkan ke daftar transaksi
-        allTransactions.unshift({ 
-            id: Date.now(),
-            tgl: now.toLocaleDateString('id-ID'), 
-            jam: jam, 
-            ket: ket.toUpperCase(), 
-            nom: total, 
-            tipe, 
-            bukti: imgUrl 
-        });
-
-        await syncToGoogle();
-        
-        // Reset Form setelah berhasil
-        document.getElementById('inKet').value = ""; 
-        document.getElementById('inNom').value = "";
-        document.getElementById('itemInputsContainer').classList.add('hidden');
-        alert("Transaksi & Nota Berhasil Tersimpan di Drive!");
-
-    } catch(e) {
-        alert("Gagal: Pastikan koneksi lancar dan data terisi!");
-        console.error(e);
-    } finally {
-        document.getElementById('loadingOverlay').style.display = 'none';
-    }
-}
 
         function deleteTrx(id) {
             if(confirm("Hapus transaksi ini?")) {
@@ -361,13 +357,12 @@ async function saveTransaction(tipe) {
             let tIuran = 0;
             
             Object.keys(dataKas).sort().forEach(n => {
-                let rowTotal = 0;
                 let r = `<tr class="hover:bg-slate-50">
                     <td class="p-4 sticky-name uppercase text-[9px] leading-tight">${n}</td>`;
                 
                 bulan.forEach(b => {
                     const checked = dataKas[n][b] ? 'checked' : '';
-                    if(dataKas[n][b]) { tIuran += 15000; rowTotal += 15000; }
+                    if(dataKas[n][b]) { tIuran += 15000; }
                     r += `<td class="text-center px-2">
                         <input type="checkbox" ${checked} ${isEditMode?'':'disabled'} 
                         onchange="dataKas['${n}']['${b}']=this.checked; debouncedSync();">
@@ -402,79 +397,73 @@ async function saveTransaction(tipe) {
             document.getElementById('totalBal').innerText = `Rp ${(tIuran+tLain-tKeluar).toLocaleString()}`;
         }
 
-function cetakLaporan() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const tgl = new Date().toLocaleDateString('id-ID');
-    const jam = new Date().getHours().toString().padStart(2, '0') + ":" + new Date().getMinutes().toString().padStart(2, '0');
+        function cetakLaporan() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const tgl = new Date().toLocaleDateString('id-ID');
+            const jam = new Date().getHours().toString().padStart(2, '0') + ":" + new Date().getMinutes().toString().padStart(2, '0');
 
-    // Header Laporan
-    doc.setFontSize(20);
-    doc.setTextColor(244, 63, 94); // Warna Rose-600
-    doc.text("LAPORAN KEUANGAN ADUWACORE", 105, 20, { align: "center" });
-    
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`Dicetak pada: ${tgl} | Pukul: ${jam} WIB`, 105, 28, { align: "center" });
-    doc.line(20, 32, 190, 32); // Garis pemisah
+            doc.setFontSize(20);
+            doc.setTextColor(244, 63, 94); 
+            doc.text("LAPORAN KEUANGAN ADUWACORE", 105, 20, { align: "center" });
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(`Dicetak pada: ${tgl} | Pukul: ${jam} WIB`, 105, 28, { align: "center" });
+            doc.line(20, 32, 190, 32); 
 
-    // Ambil angka dari tampilan dashboard
-    const tIuran = document.getElementById('totalIn').innerText;
-    const tLain = document.getElementById('totalLain').innerText;
-    const tKeluar = document.getElementById('totalOut').innerText;
-    const sBersih = document.getElementById('totalBal').innerText;
+            const tIuran = document.getElementById('totalIn').innerText;
+            const tLain = document.getElementById('totalLain').innerText;
+            const tKeluar = document.getElementById('totalOut').innerText;
+            const sBersih = document.getElementById('totalBal').innerText;
 
-    // Tabel Riwayat Transaksi
-    const rows = allTransactions.map(t => [t.tgl, t.ket, t.tipe, "Rp " + t.nom.toLocaleString()]);
-    doc.autoTable({ 
-        head: [["Tanggal", "Keterangan", "Tipe", "Nominal"]], 
-        body: rows, 
-        startY: 40,
-        theme: 'striped',
-        headStyles: { fillColor: [15, 23, 42] }, // Warna Navy
-        styles: { fontSize: 8 }
-    });
+            const rows = allTransactions.map(t => [t.tgl, t.ket, t.tipe, "Rp " + t.nom.toLocaleString()]);
+            doc.autoTable({ 
+                head: [["Tanggal", "Keterangan", "Tipe", "Nominal"]], 
+                body: rows, 
+                startY: 40,
+                theme: 'striped',
+                headStyles: { fillColor: [15, 23, 42] },
+                styles: { fontSize: 8 }
+            });
 
-    // Menambahkan Ringkasan Total di Bawah Tabel
-    const finalY = doc.lastAutoTable.finalY + 10;
-    
-    doc.setFontSize(10);
-    doc.setTextColor(0);
-    doc.setFont(undefined, 'bold');
-    doc.text("RINGKASAN SALDO:", 20, finalY);
-    
-    doc.setFont(undefined, 'normal');
-    doc.text(`Total Kas Bulanan:`, 20, finalY + 7);
-    doc.text(`${tIuran}`, 100, finalY + 7, { align: "right" });
-    
-    doc.text(`Total Pemasukan Lain:`, 20, finalY + 12);
-    doc.text(`${tLain}`, 100, finalY + 12, { align: "right" });
-    
-    doc.text(`Total Pengeluaran:`, 20, finalY + 17);
-    doc.setTextColor(220, 38, 38); // Warna Merah
-    doc.text(`- ${tKeluar}`, 100, finalY + 17, { align: "right" });
-    
-    doc.line(20, finalY + 20, 100, finalY + 20); // Garis total
-    
-    doc.setFontSize(11);
-    doc.setFont(undefined, 'bold');
-    doc.setTextColor(5, 150, 105); // Warna Hijau Emerald
-    doc.text(`SALDO BERSIH AKHIR:`, 20, finalY + 27);
-    doc.text(`${sBersih}`, 100, finalY + 27, { align: "right" });
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(10);
+            doc.setTextColor(0);
+            doc.setFont(undefined, 'bold');
+            doc.text("RINGKASAN SALDO:", 20, finalY);
+            
+            doc.setFont(undefined, 'normal');
+            doc.text(`Total Kas Bulanan:`, 20, finalY + 7);
+            doc.text(`${tIuran}`, 100, finalY + 7, { align: "right" });
+            
+            doc.text(`Total Pemasukan Lain:`, 20, finalY + 12);
+            doc.text(`${tLain}`, 100, finalY + 12, { align: "right" });
+            
+            doc.text(`Total Pengeluaran:`, 20, finalY + 17);
+            doc.setTextColor(220, 38, 38); 
+            doc.text(`- ${tKeluar}`, 100, finalY + 17, { align: "right" });
+            
+            doc.line(20, finalY + 20, 100, finalY + 20); 
+            
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(5, 150, 105); 
+            doc.text(`SALDO BERSIH AKHIR:`, 20, finalY + 27);
+            doc.text(`${sBersih}`, 100, finalY + 27, { align: "right" });
 
-    // Bagian Tanda Tangan
-    const ttdY = finalY + 45;
-    doc.setTextColor(0);
-    doc.setFontSize(10);
-    doc.setFont(undefined, 'normal');
-    doc.text("Turen, " + tgl, 150, ttdY);
-    doc.text("Bendahara Aduwacore,", 150, ttdY + 7);
-    
-    doc.setFont(undefined, 'bold');
-    doc.text("MARSYA UKHROWINA A.", 150, ttdY + 30);
+            const ttdY = finalY + 45;
+            doc.setTextColor(0);
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text("Turen, " + tgl, 150, ttdY);
+            doc.text("Bendahara Aduwacore,", 150, ttdY + 7);
+            
+            doc.setFont(undefined, 'bold');
+            doc.text("MARSYA UKHROWINA A.", 150, ttdY + 30);
 
-    doc.save(`Laporan_Kas_Aduwacore_${tgl}.pdf`);
-}
+            doc.save(`Laporan_Kas_Aduwacore_${tgl}.pdf`);
+        }
 
         window.onload = loadFromGoogle;
     </script>
