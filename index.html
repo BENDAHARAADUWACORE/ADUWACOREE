@@ -11,138 +11,127 @@
     
     <style>
         body { background-color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
-        .sticky-name { position: sticky; left: 0; background: #ffffff; z-index: 20; border-right: 3px solid #f43f5e; font-weight: 700; min-width: 150px; }
+        .sticky-name { position: sticky; left: 0; background: #ffffff; z-index: 20; border-right: 2px solid #f43f5e; font-weight: 700; min-width: 180px; padding-left: 20px !important; }
         .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
         .input-clean { border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; font-size: 11px; outline: none; transition: 0.3s; width: 100%; }
         .input-clean:focus { border-color: #f43f5e; box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.1); }
         input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #f43f5e; }
         #loadingOverlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 999; flex-direction: column; align-items: center; justify-content: center; }
-        .text-shadow-strong { text-shadow: 0px 2px 10px rgba(0,0,0,0.8); }
         .status-pill { padding: 2px 8px; border-radius: 99px; font-size: 9px; text-transform: uppercase; font-weight: 800; }
+        .stats-card { background: white; border-radius: 24px; padding: 20px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); text-align: center; border-bottom: 4px solid transparent; }
     </style>
 </head>
 <body class="pb-24">
 
     <div id="loadingOverlay">
         <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-rose-600 mb-4"></div>
-        <p class="font-bold text-slate-800 text-sm italic text-center">Menghubungkan ke Cloud...<br>Sabar ya Marsya!</p>
+        <p class="font-bold text-slate-800 text-sm italic text-center">Memproses ke Cloud...<br>Sabar ya Marsya!</p>
     </div>
 
-    <div id="msgModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md">
-        <div class="bg-white rounded-[40px] max-w-sm w-full p-10 shadow-2xl text-center border-t-8 border-rose-600">
-            <div id="msgIcon" class="text-6xl mb-4">🌸</div>
-            <h2 id="msgTitle" class="text-2xl font-extrabold text-slate-800 italic uppercase"></h2>
-            <p id="msgText" class="text-slate-500 text-[11px] my-4 font-bold italic leading-relaxed"></p>
-            <button onclick="closeModal()" class="w-full bg-slate-900 text-white font-black py-4 rounded-2xl text-[10px] uppercase tracking-widest">Laksanakan!</button>
+    <div id="msgModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl text-center border-t-8 border-rose-600">
+            <h2 id="msgTitle" class="text-xl font-extrabold text-slate-800 uppercase italic"></h2>
+            <p id="msgText" class="text-slate-500 text-xs my-4 font-medium italic"></p>
+            <button onclick="closeModal()" class="w-full bg-slate-900 text-white font-black py-3 rounded-xl text-[10px] uppercase tracking-widest">Siap!</button>
         </div>
     </div>
 
     <nav class="fixed top-0 w-full z-50 glass border-b px-6 py-4 flex justify-between items-center">
-        <div class="font-black text-xl tracking-tighter italic uppercase text-slate-800">ADUWA<span class="text-rose-600">CORE</span></div>
+        <div class="font-black text-xl italic uppercase tracking-tighter text-slate-800">ADUWA<span class="text-rose-600">CORE</span></div>
         <div id="loginArea" class="flex gap-2">
-            <input type="password" id="passInput" placeholder="Sandi Marsya" class="text-[10px] border rounded-xl px-3 py-2 outline-none w-28 border-slate-200">
-            <button onclick="login()" class="bg-slate-900 text-white text-[10px] px-4 py-2 rounded-xl font-bold hover:bg-rose-600 transition-all uppercase">Login</button>
+            <input type="password" id="passInput" placeholder="Sandi" class="text-[10px] border rounded-lg px-3 py-2 w-24">
+            <button onclick="login()" class="bg-slate-900 text-white text-[10px] px-4 py-2 rounded-lg font-bold uppercase hover:bg-rose-600">Login</button>
         </div>
         <div id="logoutArea" class="hidden flex items-center gap-4">
-            <span class="text-[9px] font-black text-rose-500 italic uppercase tracking-widest hidden md:block">Bendahara Mode Active</span>
-            <button onclick="logout()" class="text-slate-400 text-[10px] underline font-bold uppercase">Logout</button>
+            <span class="text-[9px] font-black text-rose-500 italic uppercase">Bendahara Active</span>
+            <button onclick="logout()" class="text-slate-400 text-[10px] underline uppercase">Logout</button>
         </div>
     </nav>
 
-    <div class="w-full pt-24">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="relative h-auto w-full overflow-hidden rounded-[40px] shadow-2xl bg-slate-800 border-4 border-white">
-               <img src="https://i.ibb.co/vz6Yf2x/header-aduwa.jpg" class="w-full h-auto block opacity-100" alt="Header">
-                 <div class="absolute inset-0 flex flex-col justify-end p-6 md:p-10 pb-16 bg-gradient-to-t from-black/80 via-black/10 to-transparent">
-                    <h1 class="text-white text-5xl md:text-7xl font-extrabold italic uppercase leading-none tracking-tighter text-shadow-strong">
-                        Aduwacore <br><span class="text-rose-500">Finance.</span>
-                    </h1>
-                </div>
+    <div class="w-full pt-24 px-4 max-w-7xl mx-auto">
+        <div class="relative h-64 md:h-96 w-full overflow-hidden rounded-[40px] shadow-2xl bg-slate-200 mb-10">
+            <img src="a2coreeee.jpg" class="w-full h-full object-cover" alt="Header Aduwacore" onerror="this.src='https://via.placeholder.com/1200x400?text=Upload+Foto+ke+GitHub+dengan+Nama+header-aduwa.jpg'">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-8">
+                <h1 class="text-white text-4xl md:text-6xl font-black italic uppercase">ADUWACORE<br><span class="text-rose-500">FINANCE.</span></h1>
             </div>
         </div>
-    </div>
 
-    <div class="max-w-7xl mx-auto px-4 -mt-10 relative z-30 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-        <div class="bg-white p-6 rounded-[30px] shadow-xl border-b-4 border-emerald-500">
-            <p class="text-[9px] font-black text-slate-400 uppercase">Kas Bulanan</p>
-            <h2 class="text-xl font-extrabold" id="totalIn">Rp 0</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            <div class="stats-card border-emerald-500">
+                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Kas Bulanan</p>
+                <h2 class="text-lg font-extrabold" id="totalIn">Rp 0</h2>
+            </div>
+            <div class="stats-card border-blue-500">
+                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Pemasukan Lain</p>
+                <h2 class="text-lg font-extrabold" id="totalLain">Rp 0</h2>
+            </div>
+            <div class="stats-card border-rose-500">
+                <p class="text-[9px] font-black text-rose-500 uppercase mb-1">Pengeluaran</p>
+                <h2 class="text-lg font-extrabold text-rose-600" id="totalOut">Rp 0</h2>
+            </div>
+            <div class="stats-card bg-slate-900 border-emerald-400">
+                <p class="text-[9px] font-black text-emerald-400 uppercase mb-1">Saldo Bersih</p>
+                <h2 class="text-lg font-extrabold text-white" id="totalBal">Rp 0</h2>
+            </div>
         </div>
-        <div class="bg-white p-6 rounded-[30px] shadow-xl border-b-4 border-blue-500">
-            <p class="text-[9px] font-black text-slate-400 uppercase">Pemasukan Lain</p>
-            <h2 class="text-xl font-extrabold" id="totalLain">Rp 0</h2>
-        </div>
-        <div class="bg-white p-6 rounded-[30px] shadow-xl border-b-4 border-rose-500">
-            <p class="text-[9px] font-black text-rose-500 uppercase">Pengeluaran</p>
-            <h2 class="text-xl font-extrabold text-rose-600" id="totalOut">Rp 0</h2>
-        </div>
-        <div class="bg-slate-900 p-6 rounded-[30px] shadow-xl border-b-4 border-emerald-400 text-white">
-            <p class="text-[9px] font-black text-emerald-400 uppercase italic tracking-widest">Saldo Bersih</p>
-            <h2 class="text-xl font-extrabold" id="totalBal">Rp 0</h2>
-        </div>
-    </div>
 
-    <main class="max-w-7xl mx-auto px-4 mt-12 space-y-12">
-        <section class="bg-white rounded-[40px] shadow-xl overflow-hidden border">
-            <div class="p-8 border-b bg-slate-50 flex justify-between items-center">
-                <h3 class="font-extrabold uppercase text-slate-800 italic text-xs tracking-widest">Monitoring Kas Bulanan</h3>
-                <span id="syncStatus" class="text-[9px] font-bold text-slate-400 uppercase">⏳ Memuat...</span>
+        <div class="bg-white rounded-[32px] shadow-xl overflow-hidden border border-slate-100 mb-12">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h3 class="font-bold text-[11px] uppercase italic text-slate-800">Monitoring Kas Bulanan</h3>
+                <span id="syncStatus" class="text-[9px] font-bold text-slate-400 uppercase italic">Memuat...</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-[11px]">
-                    <thead class="bg-slate-100 text-slate-500 font-bold uppercase">
+                    <thead class="bg-slate-50 text-slate-400 font-bold uppercase">
                         <tr>
-                            <th class="p-6 sticky-name">Nama Mahasiswa</th>
-                            <th>APR</th><th>MEI</th><th>JUN</th><th>JUL</th><th>AGU</th><th>SEP</th><th>OKT</th><th>NOV</th><th>DES</th>
+                            <th class="p-4 sticky-name">Nama Mahasiswa</th>
+                            <th class="px-2">APR</th><th class="px-2">MEI</th><th class="px-2">JUN</th><th class="px-2">JUL</th>
+                            <th class="px-2">AGU</th><th class="px-2">SEP</th><th class="px-2">OKT</th><th class="px-2">NOV</th><th class="px-2">DES</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="text-slate-600 font-bold divide-y divide-slate-50"></tbody>
+                    <tbody id="tableBody" class="divide-y divide-slate-50 text-slate-600 font-semibold uppercase"></tbody>
                 </table>
             </div>
-        </section>
+        </div>
 
-        <section id="bendaharaSection" class="hidden grid md:grid-cols-2 gap-8">
-            <div class="bg-blue-50 p-8 rounded-[40px] border border-blue-100 space-y-4 shadow-inner">
-                <h4 class="font-black text-blue-700 text-center text-xs uppercase italic">📥 Pemasukan Lain</h4>
-                <input type="text" id="inKet" placeholder="Keterangan" class="input-clean uppercase font-bold">
-                <input type="number" id="inNom" placeholder="Nominal" class="input-clean font-bold" onblur="autoKilo(this)">
-                <button onclick="saveTransaction('IN')" class="w-full bg-blue-700 text-white font-black py-4 rounded-2xl text-[10px] uppercase shadow-lg hover:bg-blue-800">Simpan Ke Cloud</button>
+        <section id="bendaharaSection" class="hidden grid md:grid-cols-2 gap-6 mb-12">
+            <div class="bg-blue-50/50 p-6 rounded-3xl border border-blue-100">
+                <h4 class="font-black text-blue-700 text-[10px] uppercase mb-4 italic text-center">Pemasukan Lain</h4>
+                <input type="text" id="inKet" placeholder="Keterangan" class="input-clean mb-3">
+                <input type="number" id="inNom" placeholder="Nominal" class="input-clean mb-4" onblur="autoKilo(this)">
+                <button onclick="saveTransaction('IN')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl text-[10px] uppercase">Simpan Pemasukan</button>
             </div>
-
-            <div class="bg-rose-50 p-8 rounded-[40px] border border-rose-100 space-y-4 shadow-inner">
-                <h4 class="font-black text-rose-700 text-center text-xs uppercase italic">📤 Pengeluaran Baru</h4>
-                <div class="flex gap-2">
-                    <input type="number" id="itemCount" placeholder="Jml Barang" class="input-clean">
-                    <button onclick="generateItemInputs()" class="bg-slate-900 text-white px-6 rounded-xl text-[10px] font-black uppercase">BUAT FORM</button>
+            <div class="bg-rose-50/50 p-6 rounded-3xl border border-rose-100">
+                <h4 class="font-black text-rose-700 text-[10px] uppercase mb-4 italic text-center">Input Pengeluaran</h4>
+                <div class="flex gap-2 mb-3">
+                    <input type="number" id="itemCount" placeholder="Jml Jenis" class="input-clean w-24">
+                    <button onclick="generateItemInputs()" class="bg-slate-800 text-white px-4 rounded-xl text-[10px] font-bold uppercase">Set Form</button>
                 </div>
-                <div id="itemInputsContainer" class="hidden space-y-4">
-                    <div class="overflow-hidden rounded-xl border border-rose-200">
-                        <table class="w-full text-[10px] bg-white">
-                            <tbody id="itemRows" class="divide-y"></tbody>
-                        </table>
-                    </div>
-                    <h3 class="font-black text-rose-600 text-center text-2xl" id="liveTotal">Rp 0</h3>
-                    <p class="text-[9px] font-bold text-slate-500 uppercase italic">Foto Nota (GDrive):</p>
-                    <input type="file" id="outFoto" accept="image/*" class="w-full text-[10px] bg-white p-3 rounded-xl border border-rose-200">
-                    <button onclick="saveTransaction('OUT')" class="w-full bg-rose-600 text-white font-black py-4 rounded-2xl text-[10px] uppercase shadow-xl hover:bg-rose-700 transition-all tracking-widest">Update Jurnal</button>
+                <div id="itemInputsContainer" class="hidden space-y-3">
+                    <div id="itemRows" class="space-y-2"></div>
+                    <div class="text-right font-black text-rose-600 text-xl py-2" id="liveTotal">Rp 0</div>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase italic">Lampirkan Nota:</p>
+                    <input type="file" id="outFoto" accept="image/*" class="w-full text-[10px] bg-white p-2 rounded-lg border">
+                    <button onclick="saveTransaction('OUT')" class="w-full bg-rose-600 text-white font-bold py-3 rounded-xl text-[10px] uppercase">Posting Transaksi</button>
                 </div>
             </div>
         </section>
 
-        <section class="bg-white rounded-[40px] shadow-xl overflow-hidden border">
-            <div class="p-8 bg-slate-900 text-white flex justify-between items-center">
-                <span class="font-black uppercase italic text-sm tracking-widest">Jurnal Transaksi Resmi</span>
-                <button onclick="cetakLaporan()" class="bg-emerald-500 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase">Cetak PDF</button>
+        <div class="bg-white rounded-[32px] shadow-xl overflow-hidden border border-slate-100">
+            <div class="p-6 bg-slate-900 text-white flex justify-between items-center">
+                <h3 class="font-bold text-[11px] uppercase italic tracking-widest">Jurnal Keuangan</h3>
+                <button onclick="cetakLaporan()" class="bg-emerald-500 px-4 py-2 rounded-lg text-[9px] font-black uppercase">Cetak PDF</button>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-[11px]">
                     <thead class="bg-slate-50 text-slate-400 font-bold uppercase border-b">
-                        <tr><th class="p-6">Waktu</th><th>Keterangan</th><th>Tipe</th><th class="text-right">Nominal</th><th class="text-center">Bukti</th></tr>
+                        <tr><th class="p-4">Tanggal</th><th>Keterangan</th><th>Tipe</th><th class="text-right">Nominal</th><th class="text-center">Nota</th></tr>
                     </thead>
                     <tbody id="transactionList" class="divide-y divide-slate-100"></tbody>
                 </table>
             </div>
-        </section>
-    </main>
+        </div>
+    </div>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBca3vUiqLavUGVw9YKMyClS7pNMNfCc1Kk7lVnjF96X8Uws3FUhAu1A7gLJSjCXXOFw/exec";
@@ -170,37 +159,37 @@
                 if(json && json.length >= 2) {
                     dataKas = JSON.parse(json[0][1]);
                     allTransactions = JSON.parse(json[1][1]);
-                    document.getElementById('syncStatus').innerText = "✅ Live Data Active";
                 }
-            } catch(e) { document.getElementById('syncStatus').innerText = "⚠️ Offline Mode"; }
+                document.getElementById('syncStatus').innerText = "DATA TERHUBUNG";
+            } catch(e) { document.getElementById('syncStatus').innerText = "MODE OFFLINE"; }
             render();
         }
 
         async function syncToGoogle() {
-            document.getElementById('syncStatus').innerText = "♻️ Menyimpan...";
+            document.getElementById('syncStatus').innerText = "MENYIMPAN...";
             try {
                 const payload = [["DATA_KAS", JSON.stringify(dataKas)], ["DATA_TRX", JSON.stringify(allTransactions)]];
                 await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
-                document.getElementById('syncStatus').innerText = "✅ Tersimpan";
-            } catch(e) { document.getElementById('syncStatus').innerText = "⚠️ Gagal!"; }
+                document.getElementById('syncStatus').innerText = "DATA AMAN";
+            } catch(e) { document.getElementById('syncStatus').innerText = "GAGAL SIMPAN"; }
             render();
         }
 
         function autoKilo(el) { if(el.value && el.value.length <= 3) { el.value = el.value * 1000; calcTotal(); } }
-        function login() { if(document.getElementById('passInput').value === PASS_ADMIN) { isEditMode = true; document.getElementById('loginArea').classList.add('hidden'); document.getElementById('logoutArea').classList.remove('hidden'); document.getElementById('bendaharaSection').classList.remove('hidden'); render(); showMessage('LOGIN'); } }
+        function login() { if(document.getElementById('passInput').value === PASS_ADMIN) { isEditMode = true; document.getElementById('loginArea').classList.add('hidden'); document.getElementById('logoutArea').classList.remove('hidden'); document.getElementById('bendaharaSection').classList.remove('hidden'); render(); showMessage('LOGIN BERHASIL', 'Selamat datang kembali, Marsya!'); } else { alert('Sandi salah!'); } }
         function logout() { location.reload(); }
-        function showMessage(t) { document.getElementById('msgModal').classList.remove('hidden'); document.getElementById('msgTitle').innerText = t === 'LOGIN' ? "Halo Bu Bendahara!" : "Data Aman!"; }
+        function showMessage(t, m) { document.getElementById('msgModal').classList.remove('hidden'); document.getElementById('msgTitle').innerText = t; document.getElementById('msgText').innerText = m; }
         function closeModal() { document.getElementById('msgModal').classList.add('hidden'); }
 
         function generateItemInputs() {
             const count = document.getElementById('itemCount').value;
             const body = document.getElementById('itemRows'); body.innerHTML = '';
             for(let i=0; i<count; i++) {
-                body.innerHTML += `<tr>
-                    <td class="p-2"><input type="text" class="input-clean item-name font-bold" placeholder="Nama Barang"></td>
-                    <td class="p-2 w-16"><input type="number" class="input-clean item-qty text-center" value="1" oninput="calcTotal()"></td>
-                    <td class="p-2"><input type="number" class="input-clean item-price" placeholder="Harga" oninput="calcTotal()" onblur="autoKilo(this)"></td>
-                </tr>`;
+                body.innerHTML += `<div class="grid grid-cols-5 gap-2">
+                    <input type="text" class="input-clean item-name col-span-2" placeholder="Barang">
+                    <input type="number" class="input-clean item-qty text-center" value="1" oninput="calcTotal()">
+                    <input type="number" class="input-clean item-price col-span-2" placeholder="Harga" oninput="calcTotal()" onblur="autoKilo(this)">
+                </div>`;
             }
             document.getElementById('itemInputsContainer').classList.remove('hidden');
         }
@@ -223,21 +212,20 @@
                 } else {
                     const names = document.getElementsByClassName('item-name'), qtys = document.getElementsByClassName('item-qty'), prices = document.getElementsByClassName('item-price');
                     let details = [];
-                    for(let i=0; i<names.length; i++) { if(!names[i].value) continue; details.push(`${names[i].value} (${qtys[i].value}x)`); total += (qtys[i].value * prices[i].value); }
+                    for(let i=0; i<names.length; i++) { if(!names[i].value) continue; details.push(`${names[i].value}(${qtys[i].value}x)`); total += (qtys[i].value * prices[i].value); }
                     ket = details.join(", ");
                     const file = document.getElementById('outFoto').files[0];
                     if(file) {
                         const base64 = await new Promise((res) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.readAsDataURL(file); });
-                        const upload = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ type: "FILE_UPLOAD", fileName: `Nota_${Date.now()}_${file.name}`, mimeType: file.type, base64 }) });
+                        const upload = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ type: "FILE_UPLOAD", fileName: `Nota_${Date.now()}`, mimeType: file.type, base64 }) });
                         imgUrl = await upload.text();
                     }
                 }
-                if(!ket || !total) throw new Error("Isi data dulu!");
+                if(!ket || !total) throw new Error("Data Kosong!");
                 allTransactions.unshift({ id: Date.now(), tgl: now.toLocaleDateString('id-ID'), jam: now.getHours().toString().padStart(2,'0')+":"+now.getMinutes().toString().padStart(2,'0'), ket: ket.toUpperCase(), nom: total, tipe, bukti: imgUrl });
                 await syncToGoogle();
                 document.getElementById('inKet').value = ""; document.getElementById('inNom').value = ""; document.getElementById('itemInputsContainer').classList.add('hidden');
-                alert("Berhasil!");
-            } catch(e) { alert("Gagal: " + e.message); }
+            } catch(e) { alert("Error: " + e.message); }
             finally { document.getElementById('loadingOverlay').style.display = 'none'; }
         }
 
@@ -245,7 +233,7 @@
             const b = document.getElementById('tableBody'); b.innerHTML = '';
             let tI = 0;
             Object.keys(dataKas).sort().forEach(n => {
-                let r = `<tr class="hover:bg-slate-50"><td class="p-4 sticky-name uppercase text-[9px]">${n}</td>`;
+                let r = `<tr class="hover:bg-slate-50 border-b"><td class="p-4 sticky-name text-[9px]">${n}</td>`;
                 bulan.forEach(bl => {
                     const ck = dataKas[n][bl] ? 'checked' : ''; if(dataKas[n][bl]) tI += 15000;
                     r += `<td class="text-center"><input type="checkbox" ${ck} ${isEditMode?'':'disabled'} onchange="dataKas['${n}']['${bl}']=this.checked; syncToGoogle();"></td>`;
@@ -256,7 +244,7 @@
             let tL = 0, tO = 0;
             allTransactions.forEach(t => {
                 if(t.tipe === 'IN') tL += t.nom; else tO += t.nom;
-                j.innerHTML += `<tr class="border-b"><td class="p-4 text-slate-400 font-bold text-[10px]">${t.tgl}<br>${t.jam}</td><td class="font-bold uppercase py-4 text-slate-700">${t.ket}</td><td><span class="status-pill ${t.tipe==='IN'?'bg-emerald-100 text-emerald-600':'bg-rose-100 text-rose-600'}">${t.tipe}</span></td><td class="text-right font-black">Rp ${t.nom.toLocaleString()}</td><td class="text-center">${t.bukti!=='#'?`<a href="${t.bukti}" target="_blank" class="bg-blue-500 text-white px-2 py-1 rounded text-[8px]">Nota</a>`:''} ${isEditMode?`<button onclick="deleteTrx(${t.id})" class="ml-1 text-[10px]">🗑️</button>`:''}</td></tr>`;
+                j.innerHTML += `<tr class="border-b"><td class="p-4 text-slate-400 font-bold text-[10px]">${t.tgl}</td><td class="py-4 font-bold uppercase text-slate-700">${t.ket}</td><td><span class="status-pill ${t.tipe==='IN'?'bg-emerald-100 text-emerald-600':'bg-rose-100 text-rose-600'}">${t.tipe}</span></td><td class="text-right font-black">Rp ${t.nom.toLocaleString()}</td><td class="text-center p-4">${t.bukti!=='#'?`<a href="${t.bukti}" target="_blank" class="bg-blue-600 text-white px-2 py-1 rounded text-[8px] uppercase">Lihat</a>`:''} ${isEditMode?`<button onclick="deleteTrx(${t.id})" class="ml-2">🗑️</button>`:''}</td></tr>`;
             });
             document.getElementById('totalIn').innerText = `Rp ${tI.toLocaleString()}`;
             document.getElementById('totalLain').innerText = `Rp ${tL.toLocaleString()}`;
@@ -265,14 +253,7 @@
         }
 
         function deleteTrx(id) { if(confirm("Hapus?")) { allTransactions = allTransactions.filter(t => t.id !== id); syncToGoogle(); } }
-        
-        function cetakLaporan() {
-            const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.setFontSize(18); doc.text("LAPORAN ADUWACORE", 105, 20, {align:"center"});
-            const rows = allTransactions.map(t => [t.tgl, t.ket, t.tipe, t.nom.toLocaleString()]);
-            doc.autoTable({ head: [['Tgl', 'Ket', 'Tipe', 'Nominal']], body: rows, startY: 30 });
-            doc.save("Laporan.pdf");
-        }
+        function cetakLaporan() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.text("LAPORAN ADUWACORE", 10, 10); doc.autoTable({ head: [['Tgl', 'Ket', 'Tipe', 'Nominal']], body: allTransactions.map(t => [t.tgl, t.ket, t.tipe, t.nom.toLocaleString()]) }); doc.save("Laporan.pdf"); }
 
         window.onload = loadFromGoogle;
     </script>
