@@ -199,14 +199,14 @@
         }
 
         // AUTO KILO LOGIC (SMART)
-        function autoKilo(el) { 
-            let val = parseFloat(el.value);
-            if(val && val < 100000000) { 
-                el.value = val * 1000; 
-                calcTotal(); 
-            } 
-        }
-
+function autoKilo(el) { 
+    let val = parseFloat(el.value);
+    if(val) { 
+        // Tanpa syarat minimal, berapapun angkanya langsung dikali 1000
+        el.value = val * 1000; 
+        calcTotal(); 
+    } 
+}
         function generateItemInputs() {
             const count = document.getElementById('itemCount').value;
             const body = document.getElementById('itemRows'); body.innerHTML = '';
