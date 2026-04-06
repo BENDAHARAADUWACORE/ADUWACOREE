@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADUWACORE Official Report</title>
+    <title>ADUWACORE Professional Finance</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     
@@ -12,35 +12,37 @@
         .sticky-name { position: sticky; left: 0; background: #ffffff; z-index: 20; border-right: 3px solid #f43f5e; font-weight: 700; min-width: 180px; padding-left: 15px !important; }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
         .input-clean { border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; font-size: 11px; outline: none; width: 100%; transition: 0.3s; }
+        .input-clean:focus { border-color: #f43f5e; box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.1); }
         input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: #f43f5e; }
         
-        #toast { position: fixed; bottom: 20px; right: -400px; background: #0f172a; color: white; padding: 12px 20px; border-radius: 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); transition: 0.5s; z-index: 9999; border-left: 4px solid #10b981; }
+        /* NOTIFIKASI */
+        #toast { position: fixed; bottom: 20px; right: -400px; background: #0f172a; color: white; padding: 12px 20px; border-radius: 16px; display: flex; align-items: center; gap: 10px; transition: 0.5s; z-index: 9999; border-left: 4px solid #10b981; }
         #toast.show { right: 20px; }
         #syncIcon { position: fixed; bottom: 20px; left: 20px; background: white; padding: 8px; border-radius: 50%; display: none; z-index: 100; border: 2px solid #f43f5e; }
 
-        /* --- PENGATURAN PRINT (LAPORAN) --- */
-        .print-area { display: none; } /* Sembunyi di layar biasa */
+        /* BANNER DENGAN FOTO KELAS DARI GITHUB */
+        .banner-bg {
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), 
+                        url('https://raw.githubusercontent.com/BENDAHARAADUWADORE/ADUWACOREE/main/a2coreeee.png');
+            background-size: cover;
+            background-position: center;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
 
+        /* AREA PRINT (HANYA MUNCUL SAAT CETAK) */
+        #printOnlyArea { display: none; }
         @media print {
             nav, .no-print, button, #toast, #syncIcon, #loginArea, #bendaharaSection { display: none !important; }
-            body { background: white !important; margin: 0; padding: 0; }
-            .print-area { display: block !important; padding: 20px; color: black; }
-            
-            .report-header { text-align: center; border-bottom: 3px double #000; margin-bottom: 20px; padding-bottom: 10px; }
-            .report-header h1 { font-size: 24px; font-weight: 800; margin: 0; text-transform: uppercase; }
-            
-            .summary-grid { display: flex; justify-content: space-between; gap: 10px; margin: 20px 0; }
-            .summary-card { border: 1px solid #000; padding: 10px; flex: 1; text-align: center; }
-            .summary-card strong { font-size: 10px; display: block; text-transform: uppercase; }
-            
-            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 9px; }
+            body { background: white !important; }
+            #printOnlyArea { display: block !important; padding: 20px; color: black; }
+            table { width: 100%; border-collapse: collapse; font-size: 9px; margin-bottom: 20px; }
             th, td { border: 1px solid #000 !important; padding: 5px; text-align: center; }
-            th { background: #eee !important; -webkit-print-color-adjust: exact; }
-            td:first-child { text-align: left; font-weight: bold; width: 200px; }
-
-            .nota-box { max-width: 120px; max-height: 120px; object-fit: contain; border: 1px solid #ddd; }
-            .signature { margin-top: 40px; text-align: right; padding-right: 50px; }
-            .page-break { page-break-before: always; }
+            th { background: #f0f0f0 !important; -webkit-print-color-adjust: exact; }
+            .nota-img { max-width: 120px; display: block; margin: 5px auto; }
+            .report-header { text-align: center; border-bottom: 4px double #000; padding-bottom: 10px; margin-bottom: 20px; }
         }
     </style>
 </head>
@@ -49,51 +51,11 @@
     <div id="syncIcon"><div class="animate-spin rounded-full h-5 w-5 border-2 border-t-rose-600 border-slate-200"></div></div>
     <div id="toast"><span id="toastMsg" class="text-[10px] font-bold uppercase">Berhasil!</span></div>
 
-    <div class="print-area">
-        <div class="report-header">
-            <h1>LAPORAN KEUANGAN KAS MAHASISWA</h1>
-            <p style="font-size: 14px; margin: 0;">ADUWACORE OFFICIAL FINANCE</p>
-            <p style="font-size: 10px;">Dicetak pada: <span id="pDate"></span> | Bendahara: Marsya U.A</p>
-        </div>
-
-        <div class="summary-grid">
-            <div class="summary-card"><strong>Total Kas</strong><p id="pKas">Rp 0</p></div>
-            <div class="summary-card"><strong>Pemasukan</strong><p id="pMasuk">Rp 0</p></div>
-            <div class="summary-card"><strong>Pengeluaran</strong><p id="pKeluar">Rp 0</p></div>
-            <div class="summary-card" style="background: #fdf2f2 !important; -webkit-print-color-adjust: exact;">
-                <strong>Saldo Bersih</strong><p id="pTotal" style="font-weight: bold; color: #e11d48;">Rp 0</p>
-            </div>
-        </div>
-
-        <h3 style="font-size: 12px; margin-bottom: 5px;">I. RINCIAN PEMBAYARAN KAS PER MAHASISWA</h3>
-        <table id="tableKasPrint">
-            <thead>
-                <tr><th>Nama Mahasiswa</th><th>Apr</th><th>Mei</th><th>Jun</th><th>Jul</th><th>Agu</th><th>Sep</th><th>Okt</th><th>Nov</th><th>Des</th><th>Total</th></tr>
-            </thead>
-            <tbody id="bodyKasPrint"></tbody>
-        </table>
-
-        <div class="page-break"></div>
-
-        <h3 style="font-size: 12px; margin-top: 20px; margin-bottom: 5px;">II. LOG TRANSAKSI & BUKTI PENGELUARAN</h3>
-        <table>
-            <thead>
-                <tr><th>Tanggal</th><th>Keterangan Transaksi</th><th>Tipe</th><th>Nominal</th><th>Bukti/Nota</th></tr>
-            </thead>
-            <tbody id="bodyLogPrint"></tbody>
-        </table>
-
-        <div class="signature">
-            <p>Mengetahui,</p><br><br><br>
-            <p><strong>Marsya Ukhrowina Akhyari</strong><br>Bendahara Umum</p>
-        </div>
-    </div>
-
     <nav class="fixed top-0 w-full z-50 glass border-b px-6 py-4 flex justify-between items-center no-print">
-        <div class="font-black text-xl italic text-slate-800">ADUWA<span class="text-rose-600">CORE</span></div>
+        <div class="font-black text-xl italic text-slate-800 tracking-tighter">ADUWA<span class="text-rose-600">CORE</span></div>
         <div id="loginArea" class="flex gap-2">
             <input type="password" id="passInput" placeholder="Sandi" class="text-[10px] border rounded-lg px-2 py-2 w-24 outline-none">
-            <button onclick="login()" class="bg-slate-900 text-white text-[10px] px-4 py-2 rounded-lg font-bold">LOGIN</button>
+            <button onclick="login()" class="bg-slate-900 text-white text-[10px] px-4 py-2 rounded-lg font-bold hover:bg-rose-600 transition">LOGIN</button>
         </div>
         <div id="logoutArea" class="hidden flex items-center gap-2">
             <button onclick="window.print()" class="bg-emerald-600 text-white text-[10px] px-4 py-2 rounded-lg font-bold shadow-lg">CETAK LAPORAN</button>
@@ -102,57 +64,115 @@
     </nav>
 
     <div class="w-full pt-20 px-4 max-w-7xl mx-auto no-print">
+        
+        <div class="banner-bg rounded-[32px] p-8 mb-8 text-white border-4 border-white shadow-2xl overflow-hidden relative">
+            <div class="relative z-10">
+                <h1 class="text-4xl font-black italic uppercase text-rose-500 drop-shadow-md">Aduwacore Finance.</h1>
+                <div class="mt-4 space-y-2">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-rose-600 text-[9px] font-black px-3 py-1 rounded-full uppercase">Bendahara Utama</span>
+                        <p class="text-sm font-bold tracking-wide">Marsya Ukhrowina Akhyari</p>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur-md w-fit px-4 py-2 rounded-2xl border border-white/20">
+                        <span class="text-emerald-400 font-bold">SeaBank</span>
+                        <p class="text-[12px] font-black tracking-widest text-white">901420136573</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white p-5 rounded-3xl shadow-sm border-b-4 border-blue-500">
-                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Kas Mhs</p>
-                <h2 class="text-sm font-extrabold text-blue-600" id="statKas">Rp 0</h2>
+            <div class="bg-white p-5 rounded-3xl shadow-sm border-b-4 border-blue-500 text-center">
+                <p class="text-[9px] font-black text-slate-400 uppercase">Kas Mahasiswa</p>
+                <h2 class="text-sm font-bold text-blue-600" id="statKas">Rp 0</h2>
             </div>
-            <div class="bg-white p-5 rounded-3xl shadow-sm border-b-4 border-emerald-500">
-                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Pemasukan</p>
-                <h2 class="text-sm font-extrabold text-emerald-600" id="statMasuk">Rp 0</h2>
+            <div class="bg-white p-5 rounded-3xl shadow-sm border-b-4 border-emerald-500 text-center">
+                <p class="text-[9px] font-black text-slate-400 uppercase">Pemasukan Lain</p>
+                <h2 class="text-sm font-bold text-emerald-600" id="statMasuk">Rp 0</h2>
             </div>
-            <div class="bg-white p-5 rounded-3xl shadow-sm border-b-4 border-rose-500">
-                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Keluar</p>
-                <h2 class="text-sm font-extrabold text-rose-600" id="statKeluar">Rp 0</h2>
+            <div class="bg-white p-5 rounded-3xl shadow-sm border-b-4 border-rose-500 text-center">
+                <p class="text-[9px] font-black text-slate-400 uppercase">Pengeluaran</p>
+                <h2 class="text-sm font-bold text-rose-600" id="statKeluar">Rp 0</h2>
             </div>
-            <div class="bg-slate-900 p-5 rounded-3xl shadow-sm border-b-4 border-emerald-400">
-                <p class="text-[9px] font-black text-emerald-400 uppercase mb-1">Saldo Akhir</p>
-                <h2 class="text-sm font-extrabold text-white" id="statTotal">Rp 0</h2>
+            <div class="bg-slate-900 p-5 rounded-3xl shadow-sm border-b-4 border-emerald-400 text-center">
+                <p class="text-[9px] font-black text-emerald-400 uppercase">Saldo Akhir</p>
+                <h2 class="text-sm font-bold text-white" id="statTotal">Rp 0</h2>
             </div>
         </div>
 
         <section id="bendaharaSection" class="hidden grid md:grid-cols-2 gap-4 mb-8">
             <div class="bg-white p-6 rounded-[28px] border shadow-sm">
-                <h4 class="font-black text-[10px] uppercase mb-4 text-blue-600 tracking-widest">Input Pemasukan</h4>
-                <input type="text" id="InKet" placeholder="Keterangan" class="input-clean mb-3 uppercase">
-                <input type="number" id="InNom" placeholder="Nominal Rp" class="input-clean mb-4" onblur="autoKilo(this)">
-                <button onclick="saveTransaction('PEMASUKAN')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-2xl text-[10px] uppercase">Kirim Database</button>
+                <h4 class="text-[10px] font-black text-blue-600 uppercase mb-3 underline">Input Pemasukan</h4>
+                <input type="text" id="InKet" placeholder="Keterangan" class="input-clean mb-2 uppercase">
+                <input type="number" id="InNom" placeholder="Nominal Rp" class="input-clean mb-3" onblur="autoKilo(this)">
+                <button onclick="saveTransaction('PEMASUKAN')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-2xl text-[10px] hover:bg-blue-700">POSTING DATA</button>
             </div>
             <div class="bg-white p-6 rounded-[28px] border shadow-sm">
-                <h4 class="font-black text-[10px] uppercase mb-4 text-rose-600 tracking-widest">Input Pengeluaran</h4>
-                <input type="number" id="itemCount" placeholder="Jml Barang" class="input-clean w-24 mb-3">
-                <button onclick="generateItemInputs()" class="bg-slate-800 text-white px-5 rounded-2xl text-[10px] mb-3">SET</button>
-                <div id="itemInputsContainer" class="hidden space-y-3">
-                    <div id="itemRows" class="space-y-1"></div>
-                    <div class="flex justify-between items-center border-t pt-3">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase">Total:</span>
-                        <span class="text-sm font-black text-rose-600" id="liveTotal">Rp 0</span>
-                    </div>
-                    <input type="file" id="pengeluaranFoto" class="w-full text-[9px] border p-2 rounded-xl">
-                    <button onclick="saveTransaction('PENGELUARAN')" class="w-full bg-rose-600 text-white font-bold py-3 rounded-2xl text-[10px] uppercase">Kirim Database</button>
+                <h4 class="text-[10px] font-black text-rose-600 uppercase mb-3 underline">Input Pengeluaran</h4>
+                <div class="flex gap-2 mb-2">
+                    <input type="number" id="itemCount" placeholder="Jml Barang" class="input-clean w-24">
+                    <button onclick="generateItemInputs()" class="bg-slate-800 text-white px-4 rounded-xl text-[10px] font-bold">SET</button>
+                </div>
+                <div id="itemInputsContainer" class="hidden space-y-2">
+                    <div id="itemRows" class="max-h-40 overflow-y-auto pr-2"></div>
+                    <p class="text-right font-black text-rose-600 text-xs" id="liveTotal">Total: Rp 0</p>
+                    <input type="file" id="pengeluaranFoto" class="w-full text-[9px] bg-slate-50 p-2 rounded-lg border">
+                    <button onclick="saveTransaction('PENGELUARAN')" class="w-full bg-rose-600 text-white font-bold py-3 rounded-2xl text-[10px] hover:bg-rose-700">POSTING DATA</button>
                 </div>
             </div>
         </section>
 
-        <div class="bg-white rounded-[32px] shadow-xl overflow-hidden mb-10 border border-slate-100">
+        <div class="bg-white rounded-[32px] shadow-xl overflow-hidden mb-8 border border-slate-100">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-[10px]">
-                    <thead class="bg-slate-50 text-slate-400 font-bold uppercase border-b">
-                        <tr><th class="p-4 sticky-name">Nama Mahasiswa</th><th>APR</th><th>MEI</th><th>JUN</th><th>JUL</th><th>AGU</th><th>SEP</th><th>OKT</th><th>NOV</th><th>DES</th><th class="p-4 text-center">TOTAL</th></tr>
+                <table class="w-full text-[10px]">
+                    <thead class="bg-slate-50 text-slate-400 uppercase font-black">
+                        <tr><th class="p-4 sticky-name">Daftar Mahasiswa</th><th>APR</th><th>MEI</th><th>JUN</th><th>JUL</th><th>AGU</th><th>SEP</th><th>OKT</th><th>NOV</th><th>DES</th><th class="p-4 text-center">TOTAL</th></tr>
                     </thead>
-                    <tbody id="bodyKasWeb" class="divide-y divide-slate-100"></tbody>
+                    <tbody id="bodyWebKas" class="divide-y divide-slate-100 italic"></tbody>
                 </table>
             </div>
+        </div>
+
+        <div class="bg-white rounded-[24px] shadow-xl overflow-hidden border border-slate-100 mb-10">
+            <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
+                <h3 class="font-bold text-[10px] uppercase tracking-widest text-emerald-400">Riwayat Transaksi & Pengeluaran</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-[10px]">
+                    <thead class="bg-slate-50 text-slate-400 font-bold border-b">
+                        <tr><th class="p-4">Tanggal</th><th>Keterangan</th><th>Tipe</th><th class="text-right">Nominal</th><th class="text-center">Lampiran</th></tr>
+                    </thead>
+                    <tbody id="bodyWebLog" class="divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="printOnlyArea">
+        <div class="report-header">
+            <h1 style="margin:0; font-size:24px;">LAPORAN KEUANGAN ADUWACORE</h1>
+            <p style="margin:5px 0; font-size:12px;">Bendahara: Marsya Ukhrowina Akhyari | SeaBank: 901420136573</p>
+        </div>
+        
+        <h3 style="font-size:12px; border-left:4px solid #000; padding-left:10px; margin-bottom:10px;">I. RINCIAN KAS MAHASISWA</h3>
+        <table id="pTableKas">
+            <thead>
+                <tr><th>Nama Mahasiswa</th><th>Apr</th><th>Mei</th><th>Jun</th><th>Jul</th><th>Agu</th><th>Sep</th><th>Okt</th><th>Nov</th><th>Des</th><th>Total</th></tr>
+            </thead>
+            <tbody id="pBodyKas"></tbody>
+        </table>
+
+        <h3 style="font-size:12px; border-left:4px solid #000; padding-left:10px; margin-bottom:10px; margin-top:30px;">II. LOG TRANSAKSI & BUKTI NOTA</h3>
+        <table id="pTableLog">
+            <thead>
+                <tr><th>Tgl</th><th>Keterangan</th><th>Tipe</th><th>Nominal</th><th>Bukti Nota</th></tr>
+            </thead>
+            <tbody id="pBodyLog"></tbody>
+        </table>
+
+        <div style="margin-top:60px; text-align:right; padding-right:50px; font-size:12px;">
+            <p>Mengetahui,</p><br><br><br><br>
+            <p><strong>Marsya Ukhrowina Akhyari</strong><br>Bendahara Umum</p>
         </div>
     </div>
 
@@ -164,12 +184,11 @@
 
         let dbRaw = [];
         let allTrans = [];
-        let syncQueue = 0;
 
         function showToast(m) { const t=document.getElementById('toast'); document.getElementById('toastMsg').innerText=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
-        function toggleSync(s) { if(s) syncQueue++; else syncQueue--; document.getElementById('syncIcon').style.display = (syncQueue>0)?'block':'none'; }
+        function toggleSync(s) { document.getElementById('syncIcon').style.display = s ? 'block' : 'none'; }
 
-        async function login() { if(document.getElementById('passInput').value==="12345678"){ localStorage.setItem("admin_aduwa","true"); location.reload(); } else alert("Salah!"); }
+        async function login() { if(document.getElementById('passInput').value==="12345678"){ localStorage.setItem("admin_aduwa","true"); location.reload(); } else alert("Sandi Salah!"); }
         function logout() { localStorage.removeItem("admin_aduwa"); location.reload(); }
 
         async function silentSave(nama, bIdx, status) {
@@ -196,55 +215,60 @@
                 document.getElementById('logoutArea').classList.remove('hidden');
             }
 
-            const tbWeb = document.getElementById('bodyKasWeb'); tbWeb.innerHTML = "";
-            const tbPrint = document.getElementById('bodyKasPrint'); tbPrint.innerHTML = "";
-            const logPrint = document.getElementById('bodyLogPrint'); logPrint.innerHTML = "";
+            const tbWeb = document.getElementById('bodyWebKas'); tbWeb.innerHTML = "";
+            const tbLogWeb = document.getElementById('bodyWebLog'); tbLogWeb.innerHTML = "";
+            const tbPKas = document.getElementById('pBodyKas'); tbPKas.innerHTML = "";
+            const tbPLog = document.getElementById('pBodyLog'); tbPLog.innerHTML = "";
             
-            // RENDERING TABEL KAS (WEB & PRINT)
+            // Render Kas Mahasiswa (Web & Print)
             daftarMhs.forEach(nama => {
                 const row = dbRaw.find(r => r[1] === nama) || [];
-                let rowWeb = `<tr class="border-b"><td class="p-4 sticky-name uppercase text-[9px]">${nama}</td>`;
-                let rowPrint = `<tr><td>${nama}</td>`;
-                let count = 0;
-                
+                let rWeb = `<tr class="border-b"><td class="p-4 sticky-name uppercase text-[9px]">${nama}</td>`;
+                let rPrint = `<tr><td style="text-align:left">${nama}</td>`;
+                let lunasCount = 0;
                 bulanArr.forEach((b, i) => {
                     const isL = row[i+6] === "LUNAS";
-                    if(isL) count++;
-                    rowWeb += `<td class="text-center"><input type="checkbox" onchange="silentSave('${nama}',${i},this.checked)" ${isL?'checked':''} ${isAdmin?'':'disabled'}></td>`;
-                    rowPrint += `<td>${isL?'LUNAS':'-'}</td>`;
+                    if(isL) lunasCount++;
+                    rWeb += `<td class="text-center"><input type="checkbox" onchange="silentSave('${nama}',${i},this.checked)" ${isL?'checked':''} ${isAdmin?'':'disabled'}></td>`;
+                    rPrint += `<td>${isL?'LUNAS':'-'}</td>`;
                 });
-
-                rowWeb += `<td class="text-center font-bold text-rose-600">Rp ${(count*NOMINAL_KAS).toLocaleString()}</td></tr>`;
-                rowPrint += `<td>Rp ${(count*NOMINAL_KAS).toLocaleString()}</td></tr>`;
-                
-                tbWeb.innerHTML += rowWeb;
-                tbPrint.innerHTML += rowPrint;
+                rWeb += `<td class="text-center font-black text-rose-600 bg-rose-50/20">Rp ${(lunasCount*NOMINAL_KAS).toLocaleString()}</td></tr>`;
+                rPrint += `<td style="font-weight:bold">Rp ${(lunasCount*NOMINAL_KAS).toLocaleString()}</td></tr>`;
+                tbWeb.innerHTML += rWeb;
+                tbPKas.innerHTML += rPrint;
             });
 
-            // RENDERING LOG TRANSAKSI (PRINT ONLY)
+            // Render Log Transaksi (Web & Print)
             allTrans.forEach(t => {
                 const d = new Date(t.tgl).toLocaleDateString('id-ID');
-                logPrint.innerHTML += `<tr>
+                // Versi Web
+                tbLogWeb.innerHTML += `<tr class="border-b italic">
+                    <td class="p-4 text-slate-400 font-bold">${d}</td>
+                    <td class="font-bold uppercase text-slate-700">${t.ket}</td>
+                    <td><span class="px-2 py-0.5 rounded text-[8px] font-black ${t.tipe==='PEMASUKAN'?'bg-blue-100 text-blue-600':'bg-rose-100 text-rose-600'}">${t.tipe}</span></td>
+                    <td class="text-right font-black">Rp ${Number(t.nom).toLocaleString()}</td>
+                    <td class="text-center">${t.bukti!=='#'?`<button onclick="window.open().document.write('<img src=${t.bukti} style=max-width:100%>')" class="text-blue-500 font-bold underline">LIHAT NOTA</button>`:'-'}</td>
+                </tr>`;
+                // Versi Print
+                tbPLog.innerHTML += `<tr>
                     <td>${d}</td>
                     <td style="text-align:left">${t.ket}</td>
                     <td>${t.tipe}</td>
                     <td style="text-align:right">Rp ${Number(t.nom).toLocaleString()}</td>
-                    <td>${t.bukti!=='#'?`<img src="${t.bukti}" class="nota-box">`:'-'}</td>
+                    <td>${t.bukti!=='#'?`<img src="${t.bukti}" class="nota-img">`:'-'}</td>
                 </tr>`;
             });
-
-            document.getElementById('pDate').innerText = new Date().toLocaleString('id-ID');
             updateLiveStats();
         }
 
         function updateLiveStats() {
-            let kas = document.querySelectorAll('#bodyKasWeb input[type="checkbox"]:checked').length * NOMINAL_KAS;
+            let kas = document.querySelectorAll('#bodyWebKas input[type="checkbox"]:checked').length * NOMINAL_KAS;
             let msk = 0, klr = 0;
             allTrans.forEach(t => { if(t.tipe==='PEMASUKAN') msk += Number(t.nom); else klr += Number(t.nom); });
-            
-            const val = [`Rp ${kas.toLocaleString()}`, `Rp ${msk.toLocaleString()}`, `Rp ${klr.toLocaleString()}`, `Rp ${(kas+msk-klr).toLocaleString()}`];
-            ['statKas','statMasuk','statKeluar','statTotal'].forEach((id,i) => document.getElementById(id).innerText = val[i]);
-            ['pKas','pMasuk','pKeluar','pTotal'].forEach((id,i) => document.getElementById(id).innerText = val[i]);
+            document.getElementById('statKas').innerText = `Rp ${kas.toLocaleString()}`;
+            document.getElementById('statMasuk').innerText = `Rp ${msk.toLocaleString()}`;
+            document.getElementById('statKeluar').innerText = `Rp ${klr.toLocaleString()}`;
+            document.getElementById('statTotal').innerText = `Rp ${(kas+msk-klr).toLocaleString()}`;
         }
 
         async function saveTransaction(tipe) {
@@ -255,29 +279,29 @@
                 let l=[]; ns.forEach((n,i)=>{ if(n.value){ l.push(`${n.value}(${qs[i].value}x)`); nom+=(qs[i].value*ps[i].value); }});
                 ket=l.join(", ");
                 const f=document.getElementById('pengeluaranFoto').files[0];
-                if(f) img=await new Promise(res=>{ const fr = new FileReader(); fr.onload=e=>res(e.target.result); fr.readAsDataURL(f); });
+                if(f) img=await new Promise(res=>{ const fr=new FileReader(); fr.onload=e=>res(e.target.result); fr.readAsDataURL(f); });
             }
-            if(!ket || nom<=0) return alert("Data Kosong!");
+            if(!ket || nom<=0) return alert("Data tidak lengkap!");
             
-            // RESET & NOTIF INSTAN
+            // Reset form
             if(tipe==='PEMASUKAN'){ document.getElementById('InKet').value=""; document.getElementById('InNom').value=""; }
-            else { document.getElementById('itemCount').value=""; document.getElementById('itemInputsContainer').classList.add('hidden'); document.getElementById('pengeluaranFoto').value=""; }
+            else { document.getElementById('itemCount').value=""; document.getElementById('itemInputsContainer').classList.add('hidden'); }
             
             toggleSync(true);
             try {
                 const p = { tgl: new Date().toISOString(), ket: ket.toUpperCase(), tipe: tipe, nom: nom, bukti: img };
                 await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(p), mode: 'no-cors' });
-                showToast("Transaksi Masuk!"); loadData();
+                showToast("Posting Berhasil!"); loadData();
             } catch(e){} finally { toggleSync(false); }
         }
 
         function generateItemInputs() {
             const c = document.getElementById('itemCount').value || 1;
             const r = document.getElementById('itemRows'); r.innerHTML = "";
-            for(let i=0; i<c; i++) r.innerHTML += `<div class="grid grid-cols-5 gap-1 mb-2"><input type="text" class="input-clean item-name col-span-2" placeholder="Barang"><input type="number" class="input-clean item-qty text-center" value="1" oninput="calcTotal()"><input type="number" class="input-clean item-price col-span-2" placeholder="Harga" oninput="calcTotal()" onblur="autoKilo(this)"></div>`;
+            for(let i=0; i<c; i++) r.innerHTML += `<div class="grid grid-cols-5 gap-1 mb-2"><input type="text" class="input-clean item-name col-span-2" placeholder="Item"><input type="number" class="input-clean item-qty text-center" value="1" oninput="calcTotal()"><input type="number" class="input-clean item-price col-span-2" placeholder="Harga" oninput="calcTotal()" onblur="autoKilo(this)"></div>`;
             document.getElementById('itemInputsContainer').classList.remove('hidden');
         }
-        function calcTotal() { let t=0; const qs=document.querySelectorAll('.item-qty'), ps=document.querySelectorAll('.item-price'); qs.forEach((q,i)=>t+=(q.value*ps[i].value)); document.getElementById('liveTotal').innerText=`Rp ${t.toLocaleString()}`; }
+        function calcTotal() { let t=0; const qs=document.querySelectorAll('.item-qty'), ps=document.querySelectorAll('.item-price'); qs.forEach((q,i)=>t+=(q.value*ps[i].value)); document.getElementById('liveTotal').innerText=`Total: Rp ${t.toLocaleString()}`; }
         function autoKilo(el) { if(el.value>0 && el.value<1000) el.value=el.value*1000; calcTotal(); }
 
         window.onload = loadData;
