@@ -16,17 +16,17 @@
         input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: #f43f5e; }
         
         /* Notifikasi Toast Cantik di Kanan Bawah */
-        #toast { position: fixed; bottom: 20px; right: -300px; background: #0f172a; color: white; padding: 12px 20px; border-radius: 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; border-left: 4px solid #10b981; }
+        #toast { position: fixed; bottom: 20px; right: -400px; background: #0f172a; color: white; padding: 12px 20px; border-radius: 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; border-left: 4px solid #10b981; }
         #toast.show { right: 20px; }
 
-        /* Status Proses di Pojok */
+        /* Spinner Proses di Kiri Bawah */
         #syncIcon { position: fixed; bottom: 20px; left: 20px; background: white; padding: 8px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; z-index: 100; border: 2px solid #f43f5e; }
 
         @media print {
             nav, .no-print, button, #toast, #syncIcon { display: none !important; }
             body { background: white; }
             .sticky-name { position: static; border: 1px solid #000; }
-            table { width: 100%; border-collapse: collapse; font-size: 10px; }
+            table { width: 100%; border-collapse: collapse; font-size: 9px; }
             th, td { border: 1px solid #000 !important; padding: 4px; text-align: center; }
         }
     </style>
@@ -43,7 +43,7 @@
                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
             </svg>
         </div>
-        <span class="text-[10px] font-bold uppercase tracking-tight" id="toastMsg">Data Tersimpan!</span>
+        <span class="text-[10px] font-bold uppercase tracking-tight" id="toastMsg">Berhasil Disimpan!</span>
     </div>
 
     <nav class="fixed top-0 w-full z-50 glass border-b px-6 py-4 flex justify-between items-center no-print">
@@ -81,24 +81,24 @@
         <section id="bendaharaSection" class="hidden grid md:grid-cols-2 gap-4 mb-8 no-print">
             <div class="bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm">
                 <h4 class="font-black text-[10px] uppercase mb-4 text-blue-600 tracking-widest">Input Pemasukan</h4>
-                <input type="text" id="InKet" placeholder="Keterangan Transaksi" class="input-clean mb-3 uppercase">
+                <input type="text" id="InKet" placeholder="Keterangan" class="input-clean mb-3 uppercase">
                 <input type="number" id="InNom" placeholder="Nominal Rp" class="input-clean mb-4" onblur="autoKilo(this)">
-                <button onclick="saveTransaction('PEMASUKAN')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-2xl text-[10px] uppercase hover:bg-blue-700 transition">Kirim ke Cloud</button>
+                <button onclick="saveTransaction('PEMASUKAN')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-2xl text-[10px] uppercase shadow-md hover:bg-blue-700 transition">Posting Data</button>
             </div>
             <div class="bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm">
                 <h4 class="font-black text-[10px] uppercase mb-4 text-rose-600 tracking-widest">Input Pengeluaran</h4>
                 <div class="flex gap-2 mb-3">
-                    <input type="number" id="itemCount" placeholder="Jml Barang" class="input-clean w-24">
+                    <input type="number" id="itemCount" placeholder="Jml Item" class="input-clean w-24">
                     <button onclick="generateItemInputs()" class="bg-slate-800 text-white px-5 rounded-2xl text-[10px] font-bold">SET</button>
                 </div>
                 <div id="itemInputsContainer" class="hidden space-y-3">
                     <div id="itemRows" class="space-y-1 max-h-40 overflow-y-auto"></div>
                     <div class="flex justify-between items-center border-t pt-3">
-                        <span class="text-[10px] font-bold text-slate-400 italic">Total Pengeluaran:</span>
+                        <span class="text-[10px] font-bold text-slate-400">Total:</span>
                         <span class="text-sm font-black text-rose-600" id="liveTotal">Rp 0</span>
                     </div>
                     <input type="file" id="pengeluaranFoto" class="w-full text-[9px] bg-slate-50 p-2 rounded-xl">
-                    <button onclick="saveTransaction('PENGELUARAN')" class="w-full bg-rose-600 text-white font-bold py-3 rounded-2xl text-[10px] uppercase hover:bg-rose-700 transition">Kirim ke Cloud</button>
+                    <button onclick="saveTransaction('PENGELUARAN')" class="w-full bg-rose-600 text-white font-bold py-3 rounded-2xl text-[10px] uppercase shadow-md hover:bg-rose-700 transition">Posting Data</button>
                 </div>
             </div>
         </section>
@@ -122,7 +122,7 @@
 
         <div class="bg-white rounded-[24px] shadow-xl overflow-hidden border border-slate-100 no-print">
             <div class="p-4 bg-slate-900 text-white">
-                <h3 class="font-bold text-[10px] uppercase italic tracking-widest text-emerald-400">Jurnal Transaksi Database</h3>
+                <h3 class="font-bold text-[10px] uppercase italic tracking-widest text-emerald-400">Log Transaksi Terakhir</h3>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-[10px]">
@@ -145,7 +145,6 @@
         let allTransactions = [];
         let syncQueue = 0;
 
-        // Fungsi Notifikasi Toast Cantik
         function showToast(msg) {
             const t = document.getElementById('toast');
             document.getElementById('toastMsg').innerText = msg;
@@ -153,7 +152,6 @@
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        // Indikator Proses
         function toggleSync(isSync) {
             if(isSync) syncQueue++; else syncQueue--;
             document.getElementById('syncIcon').style.display = (syncQueue > 0) ? 'block' : 'none';
@@ -167,14 +165,14 @@
         }
         function logout() { localStorage.removeItem("admin_aduwa"); location.reload(); }
 
-        // AUTO-SAVE BACKGROUND (CENTANG)
+        // AUTO-SAVE CENTANG KAS
         async function silentSave(nama, bIdx, status) {
             toggleSync(true);
-            updateLiveStats(); // Update angka instan
+            updateLiveStats();
             try {
                 const payload = { action: "UPDATE_CHECKBOX", nama: nama, colIndex: bIdx + 7, status: status };
                 await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload), mode: 'no-cors' });
-                showToast("Centang Disimpan!");
+                showToast("Centang Tersimpan!");
             } catch(e) { console.error(e); }
             finally { toggleSync(false); }
         }
@@ -218,9 +216,8 @@
             const list = document.getElementById('transactionList'); list.innerHTML = "";
             allTransactions.forEach(t => {
                 const d = new Date(t.tgl);
-                const tglStr = d.toLocaleDateString('id-ID', {day:'2-digit', month:'2-digit', year:'numeric'});
                 list.innerHTML += `<tr class="border-b">
-                    <td class="p-4 font-bold text-slate-400 text-[9px]">${tglStr}</td>
+                    <td class="p-4 font-bold text-slate-400 text-[9px]">${d.toLocaleDateString('id-ID')}</td>
                     <td class="font-bold uppercase text-slate-700">${t.ket}</td>
                     <td><span class="px-2 py-1 rounded-full font-black text-[8px] ${t.tipe==='PEMASUKAN'?'bg-blue-100 text-blue-600':'bg-rose-100 text-rose-600'}">${t.tipe}</span></td>
                     <td class="text-right font-black">Rp ${Number(t.nom).toLocaleString()}</td>
@@ -243,35 +240,48 @@
             document.getElementById('statTotal').innerText = `Rp ${(grandKas + tMasuk - tKeluar).toLocaleString()}`;
         }
 
-        // AUTO-SAVE UNTUK TRANSAKSI BESAR
+        // AUTO-SAVE SILENT UNTUK PEMASUKAN & PENGELUARAN
         async function saveTransaction(tipe) {
+            let ket = "", total = 0, img = "#";
+            
+            // Ambil Data Berdasarkan Tipe
+            if(tipe === 'PEMASUKAN') {
+                ket = document.getElementById('InKet').value;
+                total = document.getElementById('InNom').value;
+            } else {
+                const ns = document.querySelectorAll('.item-name'), qs = document.querySelectorAll('.item-qty'), ps = document.querySelectorAll('.item-price');
+                let list = []; ns.forEach((n, i) => { if(n.value){ list.push(`${n.value}(${qs[i].value}x)`); total += (qs[i].value * ps[i].value); }});
+                ket = list.join(", ");
+                const f = document.getElementById('pengeluaranFoto').files[0];
+                if(f) img = await new Promise(res => { const fr = new FileReader(); fr.onload=e=>res(e.target.result); fr.readAsDataURL(f); });
+            }
+
+            // Validasi
+            if(!ket || total <= 0) { alert("Lengkapi data dulu!"); return; }
+
+            // RESET FORM LANGSUNG (Biar Marsya bisa lanjut input lain)
+            if(tipe === 'PEMASUKAN') {
+                document.getElementById('InKet').value = ""; document.getElementById('InNom').value = "";
+            } else {
+                document.getElementById('itemCount').value = ""; 
+                document.getElementById('itemInputsContainer').classList.add('hidden');
+                document.getElementById('pengeluaranFoto').value = "";
+            }
+            
+            // Mulai Kirim Background
             toggleSync(true);
             try {
-                let ket = "", total = 0, img = "#";
-                if(tipe === 'PEMASUKAN') {
-                    ket = document.getElementById('InKet').value;
-                    total = document.getElementById('InNom').value;
-                } else {
-                    const ns = document.querySelectorAll('.item-name'), qs = document.querySelectorAll('.item-qty'), ps = document.querySelectorAll('.item-price');
-                    let list = []; ns.forEach((n, i) => { if(n.value){ list.push(`${n.value}(${qs[i].value}x)`); total += (qs[i].value * ps[i].value); }});
-                    ket = list.join(", ");
-                    const f = document.getElementById('pengeluaranFoto').files[0];
-                    if(f) img = await new Promise(res => { const fr = new FileReader(); fr.onload=e=>res(e.target.result); fr.readAsDataURL(f); });
-                }
-                if(!ket || total <= 0) { alert("Data Tidak Lengkap!"); toggleSync(false); return; }
-                
                 const p = { tgl: new Date().toISOString(), ket: ket.toUpperCase(), tipe: tipe, nom: total, bukti: img };
                 await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(p), mode: 'no-cors' });
                 
-                showToast(tipe + " Berhasil!");
-                // Reset Form
-                document.getElementById('InKet').value = ""; document.getElementById('InNom').value = "";
-                document.getElementById('itemCount').value = ""; document.getElementById('itemInputsContainer').classList.add('hidden');
-                
-                // Refresh data tanpa reload halaman penuh
+                showToast(tipe + " Terkirim!");
+                // Tarik data baru di background
                 setTimeout(loadData, 2000); 
-            } catch(e) { alert("Gagal!"); }
-            finally { toggleSync(false); }
+            } catch(e) { 
+                alert("Koneksi Gagal, Data tidak terkirim!"); 
+            } finally { 
+                toggleSync(false); 
+            }
         }
 
         function generateItemInputs() {
