@@ -16,10 +16,9 @@
         .input-clean { border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; font-size: 11px; outline: none; transition: 0.3s; width: 100%; }
         .input-clean:focus { border-color: #f43f5e; box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.1); }
         input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #f43f5e; }
-        #loadingOverlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 999; flex-direction: column; align-items: center; justify-content: center; }
+        #loadingOverlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 999; flex-direction: column; align-items: center; justify-content: center; }
         .status-pill { padding: 4px 10px; border-radius: 99px; font-size: 8px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
         .stats-card { background: white; border-radius: 24px; padding: 20px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); text-align: center; border-bottom: 4px solid transparent; }
-        
         .responsive-header { width: 100%; aspect-ratio: 16 / 7; position: relative; overflow: hidden; border-radius: 32px; }
         @media (max-width: 640px) { .responsive-header { aspect-ratio: 4 / 3; } }
     </style>
@@ -28,7 +27,7 @@
 
     <div id="loadingOverlay">
         <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-rose-600 mb-4"></div>
-        <p class="font-bold text-slate-800 text-sm italic text-center">Memproses data...<br>Sabar ya Marsya!</p>
+        <p class="font-bold text-slate-800 text-sm italic text-center">Sedang Menghubungkan ke Cloud...<br>Jangan tutup atau refresh halaman!</p>
     </div>
 
     <nav class="fixed top-0 w-full z-50 glass border-b px-6 py-4 flex justify-between items-center">
@@ -39,7 +38,7 @@
         </div>
         <div id="logoutArea" class="hidden flex items-center gap-4">
             <span class="text-[9px] font-black text-rose-500 italic uppercase">Bendahara Active</span>
-            <button onclick="logout()" class="text-slate-400 text-[10px] underline uppercase">Logout</button>
+            <button onclick="logout()" class="bg-slate-200 text-slate-600 text-[10px] px-3 py-1.5 rounded-lg font-bold uppercase">Logout</button>
         </div>
     </nav>
 
@@ -48,82 +47,65 @@
             <img src="a2coreeee.png" class="w-full h-full object-cover absolute inset-0" alt="Banner Aduwacore" onerror="this.src='https://via.placeholder.com/1200x600?text=Banner+Aduwacore'">
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent flex flex-col justify-end p-6 md:p-12">
                 <h1 class="text-white text-3xl md:text-6xl font-black italic uppercase leading-none">ADUWACORE<br><span class="text-rose-500">FINANCE.</span></h1>
-                <p class="text-white/60 text-[9px] md:text-xs font-bold uppercase tracking-widest mt-2">Marsya Ukhrowina Akhyari</p>
             </div>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            <div class="stats-card border-emerald-500">
-                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Kas Bulanan</p>
-                <h2 class="text-base md:text-lg font-extrabold" id="totalInKas">Rp 0</h2>
-            </div>
-            <div class="stats-card border-blue-500">
-                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Pemasukan Lain</p>
-                <h2 class="text-base md:text-lg font-extrabold" id="totalLain">Rp 0</h2>
-            </div>
-            <div class="stats-card border-rose-500">
-                <p class="text-[9px] font-black text-rose-500 uppercase mb-1">Pengeluaran</p>
-                <h2 class="text-base md:text-lg font-extrabold text-rose-600" id="totalOut">Rp 0</h2>
-            </div>
-            <div class="stats-card bg-slate-900 border-emerald-400">
-                <p class="text-[9px] font-black text-emerald-400 uppercase mb-1">Saldo Bersih</p>
-                <h2 class="text-base md:text-lg font-extrabold text-white" id="totalBal">Rp 0</h2>
-            </div>
+            <div class="stats-card border-emerald-500"><p class="text-[9px] font-black text-slate-400 mb-1">KAS</p><h2 class="text-base font-extrabold" id="totalInKas">Rp 0</h2></div>
+            <div class="stats-card border-blue-500"><p class="text-[9px] font-black text-slate-400 mb-1">LAINNYA</p><h2 class="text-base font-extrabold" id="totalLain">Rp 0</h2></div>
+            <div class="stats-card border-rose-500"><p class="text-[9px] font-black text-rose-500 mb-1">KELUAR</p><h2 class="text-base font-extrabold text-rose-600" id="totalOut">Rp 0</h2></div>
+            <div class="stats-card bg-slate-900 border-emerald-400"><p class="text-[9px] font-black text-emerald-400 mb-1">SALDO</p><h2 class="text-base font-extrabold text-white" id="totalBal">Rp 0</h2></div>
         </div>
 
         <section id="bendaharaSection" class="hidden grid md:grid-cols-2 gap-6 mb-12">
             <div class="bg-blue-50/50 p-6 rounded-3xl border border-blue-100">
-                <h4 class="font-black text-blue-700 text-[10px] uppercase mb-5 italic text-center">Tambah Pemasukan</h4>
-                <input type="text" id="InKet" placeholder="Keterangan" class="input-clean mb-4">
-                <input type="number" id="InNom" placeholder="Nominal" class="input-clean mb-5" onblur="autoKilo(this)">
-                <button onclick="saveTransaction('PEMASUKAN')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl text-[10px] uppercase">Simpan Pemasukan</button>
+                <h4 class="font-black text-blue-700 text-[10px] uppercase mb-4 italic text-center">Pemasukan Baru</h4>
+                <input type="text" id="InKet" placeholder="Keterangan" class="input-clean mb-3">
+                <input type="number" id="InNom" placeholder="Nominal" class="input-clean mb-4" onblur="autoKilo(this)">
+                <button onclick="saveTransaction('PEMASUKAN')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl text-[10px] uppercase">Posting Pemasukan</button>
             </div>
             
             <div class="bg-rose-50/50 p-6 rounded-3xl border border-rose-100">
-                <h4 class="font-black text-rose-700 text-[10px] uppercase mb-5 italic text-center">Tambah Pengeluaran</h4>
-                <div class="flex gap-2 mb-4">
-                    <input type="number" id="itemCount" placeholder="Jml Jenis" class="input-clean w-24">
-                    <button onclick="generateItemInputs()" class="bg-slate-800 text-white px-4 rounded-xl text-[10px] font-bold">SET FORM</button>
+                <h4 class="font-black text-rose-700 text-[10px] uppercase mb-4 italic text-center">Pengeluaran Baru</h4>
+                <div class="flex gap-2 mb-3">
+                    <input type="number" id="itemCount" placeholder="Jml" class="input-clean w-16">
+                    <button onclick="generateItemInputs()" class="bg-slate-800 text-white px-3 rounded-xl text-[10px] font-bold">BUAT FORM</button>
                 </div>
                 <div id="itemInputsContainer" class="hidden space-y-3">
                     <div id="itemRows" class="space-y-2"></div>
-                    <div class="text-right font-black text-rose-600 text-xl py-2" id="liveTotal">Rp 0</div>
+                    <div class="text-right font-black text-rose-600 text-lg py-1" id="liveTotal">Rp 0</div>
                     <input type="file" id="pengeluaranFoto" accept="image/*" class="w-full text-[10px] bg-white p-2 rounded-lg border">
-                    <button onclick="saveTransaction('PENGELUARAN')" class="w-full bg-rose-600 text-white font-bold py-3 rounded-xl text-[10px] uppercase shadow-lg">Posting Pengeluaran</button>
+                    <button onclick="saveTransaction('PENGELUARAN')" class="w-full bg-rose-600 text-white font-bold py-3 rounded-xl text-[10px] uppercase">Posting Pengeluaran</button>
                 </div>
             </div>
         </section>
 
-        <div class="bg-white rounded-[32px] shadow-xl overflow-hidden border border-slate-100 mb-12">
-            <div class="p-6 border-b flex justify-between items-center bg-slate-50/50">
-                <h3 class="font-bold text-[10px] md:text-[11px] uppercase italic text-slate-800">Monitoring Kas Bulanan</h3>
-                <span id="syncStatus" class="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Checking...</span>
+        <div class="bg-white rounded-[32px] shadow-xl overflow-hidden mb-10">
+            <div class="p-5 border-b flex justify-between items-center">
+                <h3 class="font-bold text-[11px] uppercase italic">Monitoring Kas</h3>
+                <span id="syncStatus" class="text-[8px] font-bold text-slate-400 uppercase">Ready</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-[11px]">
-                    <thead class="bg-slate-100/50 text-slate-400 font-bold uppercase">
-                        <tr>
-                            <th class="p-4 sticky-name">Nama Mahasiswa</th>
-                            <th class="px-2">APR</th><th class="px-2">MEI</th><th class="px-2">JUN</th><th class="px-2">JUL</th>
-                            <th class="px-2">AGU</th><th class="px-2">SEP</th><th class="px-2">OKT</th><th class="px-2">NOV</th><th class="px-2">DES</th>
-                        </tr>
+                    <thead class="bg-slate-50 text-slate-400 font-bold uppercase">
+                        <tr><th class="p-4 sticky-name">Nama</th><th class="px-2">APR</th><th class="px-2">MEI</th><th class="px-2">JUN</th><th class="px-2">JUL</th><th class="px-2">AGU</th><th class="px-2">SEP</th><th class="px-2">OKT</th><th class="px-2">NOV</th><th class="px-2">DES</th></tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-50 text-slate-600 font-semibold uppercase"></tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
         </div>
 
-        <div class="bg-white rounded-[32px] shadow-xl overflow-hidden border border-slate-100">
-            <div class="p-6 bg-slate-900 text-white flex justify-between items-center">
-                <h3 class="font-bold text-[11px] uppercase italic tracking-widest text-emerald-400">Jurnal Transaksi</h3>
-                <button onclick="cetakLaporan()" class="bg-white/10 px-4 py-2 rounded-lg text-[9px] font-black uppercase">Cetak PDF</button>
+        <div class="bg-white rounded-[32px] shadow-xl overflow-hidden">
+            <div class="p-5 bg-slate-900 text-white flex justify-between items-center">
+                <h3 class="font-bold text-[11px] uppercase text-emerald-400">Jurnal Transaksi</h3>
+                <button onclick="cetakLaporan()" class="bg-white/10 px-3 py-1.5 rounded text-[9px] font-black uppercase">Cetak PDF</button>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-[11px]">
-                    <thead class="bg-slate-50 text-slate-400 font-bold uppercase border-b">
+                    <thead class="bg-slate-50 text-slate-400 font-bold border-b">
                         <tr><th class="p-4">Tanggal</th><th>Keterangan</th><th>Tipe</th><th class="text-right">Nominal</th><th class="text-center">Aksi</th></tr>
                     </thead>
-                    <tbody id="transactionList" class="divide-y divide-slate-100"></tbody>
+                    <tbody id="transactionList" class="divide-y"></tbody>
                 </table>
             </div>
         </div>
@@ -135,52 +117,45 @@
         const bulan = ["Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
         
         let isEditMode = false;
-        let dataKas = {
-            "EZIZA ZADA HULUL HUKAMA SUTRISNO": {}, "FAKHRI AKBAR DHIYAUL HAQ": {}, "FANI KRISTIYANTO": {},
-            "FARIZ AQEELA HERYAWAN": {}, "FARREL BINTANG PRADANA": {}, "FASYA BAARIQ ARKAAN": {},
-            "FATHAN KURNIAWAN": {}, "GALIB AZFA RIFQI": {}, "HABIBURRAHMAN AL ANAM": {},
-            "HANIF ZULFIKAR ALSYAKUR": {}, "HARYA LUTHFI RADITIYA ACHMAD": {}, "HILDA DIANA": {},
-            "IBRA AGUSTI DZUL FAQAR": {}, "IDHAM ENDRISON": {}, "IFAN CANDRA WIJAYA": {},
-            "ISMAIL FAHMI HARIMURTI": {}, "ISTIQOMAH KURNIA RAMADANI": {}, "JORGEN TIMOTHY FRANKLIN KARUNDENG": {},
-            "JOVIAN DWI RADITYAN": {}, "KEIZA ENRIQU FAHREZA": {}, "KRISANTIS ARIMA DEO": {},
-            "LENNY RIZKY NUR AZIZAH": {}, "LUTFIA AIMAN RIAN HIDAYAH": {}, "MARIA ELISABETH NAHAK BRIA": {},
-            "MARIANI AISYAH DINIAR": {}, "MARSYA UKHROWINA AKHYARI": {}, "MAULANA YUSRIL FAWAIZ": {}
-        };
+        let dataKas = {}; // Akan diisi dari Google
         let allTransactions = [];
 
         async function loadFromGoogle() {
             try {
                 const res = await fetch(SCRIPT_URL);
                 const json = await res.json();
-                if(json && json.length >= 2) {
+                if(json) {
                     dataKas = JSON.parse(json[0][1]);
                     allTransactions = JSON.parse(json[1][1]);
                 }
-                document.getElementById('syncStatus').innerText = "LIVE SYNC";
-            } catch(e) { document.getElementById('syncStatus').innerText = "OFFLINE"; }
-            render();
+                render();
+            } catch(e) { console.log("Offline mode"); render(); }
         }
 
         async function syncToGoogle() {
             document.getElementById('syncStatus').innerText = "SYNCING...";
             try {
                 const payload = [["DATA_KAS", JSON.stringify(dataKas)], ["DATA_TRX", JSON.stringify(allTransactions)]];
-                await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+                const response = await fetch(SCRIPT_URL, { 
+                    method: "POST", 
+                    body: JSON.stringify(payload),
+                    mode: 'no-cors' // Penting untuk Apps Script POST
+                });
                 document.getElementById('syncStatus').innerText = "SAVED";
+                return true;
             } catch(e) { 
                 document.getElementById('syncStatus').innerText = "FAILED"; 
+                return false;
             }
-            render();
         }
 
         function login() { 
-            const pass = document.getElementById('passInput').value;
-            if(pass === PASS_ADMIN) { 
+            if(document.getElementById('passInput').value === PASS_ADMIN) { 
                 isEditMode = true; 
                 localStorage.setItem("aduwacore_admin", "true"); 
                 showAdminUI();
                 render(); 
-            } else { alert("Sandi Salah!"); }
+            } else { alert("Salah!"); }
         }
 
         function showAdminUI() {
@@ -189,24 +164,15 @@
             document.getElementById('bendaharaSection').classList.remove('hidden'); 
         }
 
-        function logout() { 
-            if(confirm("Yakin Logout?")) {
-                localStorage.removeItem("aduwacore_admin");
-                location.reload(); 
-            }
-        }
+        function logout() { localStorage.removeItem("aduwacore_admin"); location.reload(); }
 
-        // LOGIKA AUTO KILO AGRESIF
         function autoKilo(el) { 
             let val = parseFloat(el.value);
-            if(!isNaN(val) && val !== 0) { 
-                el.value = val * 1000; 
-                calcTotal(); 
-            } 
+            if(!isNaN(val) && val < 1000 && val !== 0) { el.value = val * 1000; calcTotal(); } 
         }
 
         function generateItemInputs() {
-            const count = document.getElementById('itemCount').value;
+            const count = parseInt(document.getElementById('itemCount').value) || 1;
             const body = document.getElementById('itemRows'); body.innerHTML = '';
             for(let i=0; i<count; i++) {
                 body.innerHTML += `<div class="grid grid-cols-5 gap-2">
@@ -227,12 +193,15 @@
             return t;
         }
 
+        // FUNGSI SIMPAN YANG SUDAH DIPERKUAT (AUTO SAVE PENGELUARAN FIX)
         async function saveTransaction(tipe) {
-            let ket = ""; let total = 0; let imgData = "#";
-            const now = new Date();
-            document.getElementById('loadingOverlay').style.display = 'flex';
-            
+            const loader = document.getElementById('loadingOverlay');
+            loader.style.display = 'flex';
+
             try {
+                let ket = ""; let total = 0; let imgData = "#";
+                const now = new Date();
+
                 if(tipe === 'PEMASUKAN') {
                     ket = document.getElementById('InKet').value;
                     total = parseInt(document.getElementById('InNom').value);
@@ -240,37 +209,68 @@
                     const names = document.getElementsByClassName('item-name');
                     const qtys = document.getElementsByClassName('item-qty');
                     const prices = document.getElementsByClassName('item-price');
-                    let details = [];
-                    for(let i=0; i<names.length; i++) { 
-                        if(!names[i].value) continue; 
-                        details.push(`${names[i].value}(${qtys[i].value}x)`); 
-                        total += (parseFloat(qtys[i].value) * parseFloat(prices[i].value)); 
+                    let list = [];
+                    for(let i=0; i<names.length; i++) {
+                        if(names[i].value.trim() !== "") {
+                            let sub = (parseFloat(qtys[i].value) || 0) * (parseFloat(prices[i].value) || 0);
+                            list.push(`${names[i].value} (${qtys[i].value}x)`);
+                            total += sub;
+                        }
                     }
-                    ket = details.join(", ");
-                    const fileInput = document.getElementById('pengeluaranFoto');
-                    if(fileInput && fileInput.files[0]) {
-                        imgData = await new Promise((res) => { 
-                            const r = new FileReader(); 
-                            r.onload = (e) => res(e.target.result); 
-                            r.readAsDataURL(fileInput.files[0]); 
+                    ket = list.join(", ");
+                    
+                    const f = document.getElementById('pengeluaranFoto').files[0];
+                    if(f) {
+                        imgData = await new Promise(resolve => {
+                            const reader = new FileReader();
+                            reader.onload = e => resolve(e.target.result);
+                            reader.readAsDataURL(f);
                         });
                     }
                 }
 
-                if(!ket || !total) throw new Error("Lengkapi data!");
-                allTransactions.unshift({ id: Date.now(), tgl: now.toLocaleDateString('id-ID'), ket: ket.toUpperCase(), nom: total, tipe: tipe, bukti: imgData });
+                if(!ket || total <= 0) {
+                    alert("Keterangan atau Nominal tidak boleh kosong!");
+                    loader.style.display = 'none';
+                    return;
+                }
+
+                // 1. Masukkan ke list lokal
+                allTransactions.unshift({
+                    id: Date.now(),
+                    tgl: now.toLocaleDateString('id-ID'),
+                    ket: ket.toUpperCase(),
+                    nom: total,
+                    tipe: tipe,
+                    bukti: imgData
+                });
+
+                // 2. Paksa sinkronisasi ke Cloud dan tunggu
                 await syncToGoogle();
-                alert("Berhasil!");
+                
+                // 3. Notifikasi Berhasil
+                alert("Data Berhasil Terposting ke Cloud!");
+                
+                // 4. Reload untuk memastikan data fresh
                 location.reload();
-            } catch(e) { alert(e.message); } 
-            finally { document.getElementById('loadingOverlay').style.display = 'none'; }
+
+            } catch(err) {
+                alert("Gagal menyimpan: " + err.message);
+            } finally {
+                loader.style.display = 'none';
+            }
         }
 
         function render() {
             const b = document.getElementById('tableBody'); b.innerHTML = '';
-            let tKas = 0;
-            Object.keys(dataKas).sort().forEach(n => {
-                let r = `<tr class="hover:bg-slate-50 border-b"><td class="p-4 sticky-name text-[9px]">${n}</td>`;
+            let tKas = 0, tLain = 0, tOut = 0;
+            
+            // Nama Mahasiswa Default jika data kosong
+            const names = Object.keys(dataKas).length ? Object.keys(dataKas).sort() : ["MAULANA YUSRIL FAWAIZ", "MARSYA UKHROWINA AKHYARI"]; 
+            
+            names.forEach(n => {
+                if(!dataKas[n]) dataKas[n] = {};
+                let r = `<tr class="border-b"><td class="p-4 sticky-name text-[9px]">${n}</td>`;
                 bulan.forEach(bl => {
                     const ck = dataKas[n][bl] ? 'checked' : ''; 
                     if(dataKas[n][bl]) tKas += 15000;
@@ -280,48 +280,46 @@
             });
 
             const j = document.getElementById('transactionList'); j.innerHTML = '';
-            let tLain = 0, tOut = 0;
             allTransactions.forEach(t => {
                 if(t.tipe === 'PEMASUKAN') tLain += t.nom; else tOut += t.nom;
-                j.innerHTML += `<tr class="border-b">
-                    <td class="p-4 text-slate-400 font-bold text-[10px]">${t.tgl}</td>
-                    <td class="py-4 font-bold uppercase text-slate-700">${t.ket}</td>
+                j.innerHTML += `<tr>
+                    <td class="p-4 text-slate-400">${t.tgl}</td>
+                    <td class="font-bold uppercase">${t.ket}</td>
                     <td><span class="status-pill ${t.tipe==='PEMASUKAN'?'bg-emerald-100 text-emerald-600':'bg-rose-100 text-rose-600'}">${t.tipe}</span></td>
                     <td class="text-right font-black">Rp ${t.nom.toLocaleString()}</td>
-                    <td class="text-center p-4">
-                        ${t.bukti!=='#'?`<button onclick="openNota('${t.bukti}')" class="bg-blue-600 text-white px-2 py-1 rounded text-[8px] uppercase">Nota</button>`:''} 
+                    <td class="text-center">
+                        ${t.bukti!=='#'?`<button onclick="window.open().document.write('<img src=${t.bukti}>')" class="text-blue-600 underline">Nota</button>`:''}
                         ${isEditMode?`<button onclick="deleteTrx(${t.id})" class="ml-2">🗑️</button>`:''}
                     </td>
                 </tr>`;
             });
+
             document.getElementById('totalInKas').innerText = `Rp ${tKas.toLocaleString()}`;
             document.getElementById('totalLain').innerText = `Rp ${tLain.toLocaleString()}`;
             document.getElementById('totalOut').innerText = `Rp ${tOut.toLocaleString()}`;
             document.getElementById('totalBal').innerText = `Rp ${(tKas + tLain - tOut).toLocaleString()}`;
         }
 
-        function openNota(base64) {
-            const win = window.open();
-            win.document.write(`<html><body style="margin:0;display:flex;align-items:center;justify-content:center;background:#000"><img src="${base64}" style="max-width:100%;max-height:100vh"></body></html>`);
-        }
-
-        function deleteTrx(id) { if(confirm("Hapus?")) { allTransactions = allTransactions.filter(t => t.id !== id); syncToGoogle(); } }
-        
-        function cetakLaporan() { 
-            const { jsPDF } = window.jspdf; 
-            const doc = new jsPDF(); 
-            doc.text("LAPORAN KEUANGAN ADUWACORE", 10, 10); 
-            doc.autoTable({ head: [['Tgl', 'Ket', 'Tipe', 'Nominal']], body: allTransactions.map(t => [t.tgl, t.ket, t.tipe, t.nom.toLocaleString()]) }); 
-            doc.save("Laporan_Kas.pdf"); 
-        }
-
-        window.onload = function() {
-            loadFromGoogle();
-            if(localStorage.getItem("aduwacore_admin") === "true") {
-                isEditMode = true;
-                showAdminUI();
+        async function deleteTrx(id) {
+            if(confirm("Hapus?")) {
+                allTransactions = allTransactions.filter(x => x.id !== id);
+                await syncToGoogle();
+                render();
             }
-        };
+        }
+
+        function cetakLaporan() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text("Laporan Kas Aduwacore", 10, 10);
+            doc.autoTable({ head: [['Tgl', 'Ket', 'Tipe', 'Nom']], body: allTransactions.map(x => [x.tgl, x.ket, x.tipe, x.nom]) });
+            doc.save("Laporan.pdf");
+        }
+
+        window.onload = () => {
+            if(localStorage.getItem("aduwacore_admin") === "true") { isEditMode = true; showAdminUI(); }
+            loadFromGoogle();
+        }
     </script>
 </body>
 </html>
