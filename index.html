@@ -3,133 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADUWACORE Official Finance</title>
+    <title>ADUWACORE Professional Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        body { background-color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        body { background-color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; }
         .sticky-name { position: sticky; left: 0; background: #ffffff; z-index: 20; border-right: 3px solid #f43f5e; font-weight: 700; min-width: 180px; padding-left: 15px !important; }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
-        .input-clean { border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; font-size: 11px; outline: none; width: 100%; transition: 0.3s; }
-        .input-clean:focus { border-color: #f43f5e; box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.1); }
+        .input-clean { border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; font-size: 11px; outline: none; width: 100%; }
         input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: #f43f5e; }
         
-        /* Notifikasi Toast Cantik di Kanan Bawah */
-        #toast { position: fixed; bottom: 20px; right: -400px; background: #0f172a; color: white; padding: 12px 20px; border-radius: 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; border-left: 4px solid #10b981; }
+        /* Notifikasi Toast */
+        #toast { position: fixed; bottom: 20px; right: -400px; background: #0f172a; color: white; padding: 12px 20px; border-radius: 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); transition: 0.5s; z-index: 9999; border-left: 4px solid #10b981; }
         #toast.show { right: 20px; }
+        #syncIcon { position: fixed; bottom: 20px; left: 20px; background: white; padding: 8px; border-radius: 50%; display: none; z-index: 100; border: 2px solid #f43f5e; }
 
-        /* Spinner Proses di Kiri Bawah */
-        #syncIcon { position: fixed; bottom: 20px; left: 20px; background: white; padding: 8px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; z-index: 100; border: 2px solid #f43f5e; }
-
+        /* --- STYLE KHUSUS CETAK LAPORAN (PRINT) --- */
         @media print {
-            nav, .no-print, button, #toast, #syncIcon { display: none !important; }
-            body { background: white; }
-            .sticky-name { position: static; border: 1px solid #000; }
-            table { width: 100%; border-collapse: collapse; font-size: 9px; }
-            th, td { border: 1px solid #000 !important; padding: 4px; text-align: center; }
+            nav, .no-print, button, #toast, #syncIcon, #loginArea, #bendaharaSection { display: none !important; }
+            body { background: white; padding: 0; margin: 0; color: black; }
+            .print-only { display: block !important; }
+            .report-container { padding: 40px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 10px; }
+            th, td { border: 1px solid #333 !important; padding: 8px; text-align: left; }
+            th { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; }
+            .summary-box { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+            .summary-item { border: 1px solid #ddd; padding: 10px; text-align: center; }
+            .nota-img { max-width: 150px; height: auto; border: 1px solid #eee; }
+            .signature-space { margin-top: 50px; display: flex; justify-content: flex-end; }
+            .sticky-name { position: static !important; border-right: 1px solid #333 !important; }
+            h1, h2 { text-align: center; text-transform: uppercase; margin: 0; }
         }
+        .print-only { display: none; }
     </style>
 </head>
 <body class="pb-24">
 
-    <div id="syncIcon">
-        <div class="animate-spin rounded-full h-5 w-5 border-2 border-t-rose-600 border-slate-200"></div>
-    </div>
-
-    <div id="toast">
-        <div class="bg-emerald-500 rounded-full p-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-            </svg>
-        </div>
-        <span class="text-[10px] font-bold uppercase tracking-tight" id="toastMsg">Berhasil Disimpan!</span>
-    </div>
+    <div id="syncIcon"><div class="animate-spin rounded-full h-5 w-5 border-2 border-t-rose-600 border-slate-200"></div></div>
+    <div id="toast"><span id="toastMsg">Berhasil!</span></div>
 
     <nav class="fixed top-0 w-full z-50 glass border-b px-6 py-4 flex justify-between items-center no-print">
-        <div class="font-black text-xl italic tracking-tighter text-slate-800">ADUWA<span class="text-rose-600">CORE</span></div>
+        <div class="font-black text-xl italic text-slate-800">ADUWA<span class="text-rose-600">CORE</span></div>
         <div id="loginArea" class="flex gap-2">
             <input type="password" id="passInput" placeholder="Sandi" class="text-[10px] border rounded-lg px-2 py-2 w-24 outline-none">
             <button onclick="login()" class="bg-slate-900 text-white text-[10px] px-4 py-2 rounded-lg font-bold">LOGIN</button>
         </div>
         <div id="logoutArea" class="hidden flex items-center gap-2">
-            <button onclick="window.print()" class="bg-emerald-600 text-white text-[10px] px-4 py-2 rounded-lg font-bold">CETAK PDF</button>
-            <button onclick="logout()" class="bg-rose-100 text-rose-600 text-[10px] px-4 py-2 rounded-lg font-bold border border-rose-200">LOGOUT</button>
+            <button onclick="window.print()" class="bg-emerald-600 text-white text-[10px] px-4 py-2 rounded-lg font-bold">CETAK LAPORAN</button>
+            <button onclick="logout()" class="bg-rose-100 text-rose-600 text-[10px] px-4 py-2 rounded-lg font-bold">LOGOUT</button>
         </div>
     </nav>
 
-    <div class="w-full pt-20 px-4 max-w-7xl mx-auto">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 no-print">
+    <div class="print-only report-container">
+        <h1>Laporan Keuangan Mahasiswa</h1>
+        <h2>ADUWACORE OFFICIAL</h2>
+        <p class="text-center text-[10px] mb-6">Tanggal Cetak: <span id="currentDate"></span></p>
+
+        <div class="summary-box">
+            <div class="summary-item"><strong>Uang Kas</strong><br><span id="pKas">0</span></div>
+            <div class="summary-item"><strong>Pemasukan</strong><br><span id="pMasuk">0</span></div>
+            <div class="summary-item"><strong>Pengeluaran</strong><br><span id="pKeluar">0</span></div>
+            <div class="summary-item" style="background:#f0f9ff"><strong>Saldo Akhir</strong><br><span id="pTotal" style="color:#e11d48; font-weight:bold">0</span></div>
+        </div>
+
+        <h3>1. Rincian Pembayaran Kas (Per Mahasiswa)</h3>
+        <table id="printTableKas"></table>
+
+        <div style="page-break-before: always;"></div>
+        <h3>2. Log Transaksi & Bukti Nota</h3>
+        <table id="printTableLog">
+            <thead>
+                <tr>
+                    <th>Tgl</th>
+                    <th>Keterangan</th>
+                    <th>Tipe</th>
+                    <th>Nominal</th>
+                    <th>Bukti/Nota</th>
+                </tr>
+            </thead>
+            <tbody id="printLogBody"></tbody>
+        </table>
+
+        <div class="signature-space">
+            <div class="text-center">
+                <p>Mengetahui,</p>
+                <br><br><br>
+                <p><strong>Marsya Ukhrowina Akhyari</strong><br>Bendahara Umum</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full pt-20 px-4 max-w-7xl mx-auto no-print">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div class="bg-white p-5 rounded-3xl shadow-sm border-b-4 border-blue-500">
-                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Kas Mhs</p>
+                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Kas Terkumpul</p>
                 <h2 class="text-sm font-extrabold text-blue-600" id="statKas">Rp 0</h2>
             </div>
             <div class="bg-white p-5 rounded-3xl shadow-sm border-b-4 border-emerald-500">
-                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Pemasukan</p>
+                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Masuk Lain</p>
                 <h2 class="text-sm font-extrabold text-emerald-600" id="statMasuk">Rp 0</h2>
             </div>
             <div class="bg-white p-5 rounded-3xl shadow-sm border-b-4 border-rose-500">
-                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Pengeluaran</p>
+                <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Total Keluar</p>
                 <h2 class="text-sm font-extrabold text-rose-600" id="statKeluar">Rp 0</h2>
             </div>
             <div class="bg-slate-900 p-5 rounded-3xl shadow-sm border-b-4 border-emerald-400">
-                <p class="text-[9px] font-black text-emerald-400 uppercase mb-1">Total Saldo</p>
+                <p class="text-[9px] font-black text-emerald-400 uppercase mb-1">Saldo Bersih</p>
                 <h2 class="text-sm font-extrabold text-white" id="statTotal">Rp 0</h2>
             </div>
         </div>
 
-        <section id="bendaharaSection" class="hidden grid md:grid-cols-2 gap-4 mb-8 no-print">
-            <div class="bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm">
-                <h4 class="font-black text-[10px] uppercase mb-4 text-blue-600 tracking-widest">Input Pemasukan</h4>
-                <input type="text" id="InKet" placeholder="Keterangan" class="input-clean mb-3 uppercase">
-                <input type="number" id="InNom" placeholder="Nominal Rp" class="input-clean mb-4" onblur="autoKilo(this)">
-                <button onclick="saveTransaction('PEMASUKAN')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-2xl text-[10px] uppercase shadow-md hover:bg-blue-700 transition">Posting Data</button>
+        <section id="bendaharaSection" class="hidden grid md:grid-cols-2 gap-4 mb-8">
+            <div class="bg-white p-6 rounded-[28px] border shadow-sm">
+                <h4 class="font-black text-[10px] uppercase mb-4 text-blue-600">Input Pemasukan</h4>
+                <input type="text" id="InKet" placeholder="Keterangan" class="input-clean mb-3">
+                <input type="number" id="InNom" placeholder="Nominal" class="input-clean mb-4" onblur="autoKilo(this)">
+                <button onclick="saveTransaction('PEMASUKAN')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-2xl text-[10px] uppercase">Posting</button>
             </div>
-            <div class="bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm">
-                <h4 class="font-black text-[10px] uppercase mb-4 text-rose-600 tracking-widest">Input Pengeluaran</h4>
-                <div class="flex gap-2 mb-3">
-                    <input type="number" id="itemCount" placeholder="Jml Item" class="input-clean w-24">
-                    <button onclick="generateItemInputs()" class="bg-slate-800 text-white px-5 rounded-2xl text-[10px] font-bold">SET</button>
-                </div>
+            <div class="bg-white p-6 rounded-[28px] border shadow-sm">
+                <h4 class="font-black text-[10px] uppercase mb-4 text-rose-600">Input Pengeluaran</h4>
+                <input type="number" id="itemCount" placeholder="Jml Item" class="input-clean mb-3 w-24">
+                <button onclick="generateItemInputs()" class="bg-slate-800 text-white px-4 py-2 rounded-xl text-[10px] mb-3">SET</button>
                 <div id="itemInputsContainer" class="hidden space-y-3">
-                    <div id="itemRows" class="space-y-1 max-h-40 overflow-y-auto"></div>
-                    <div class="flex justify-between items-center border-t pt-3">
-                        <span class="text-[10px] font-bold text-slate-400">Total:</span>
-                        <span class="text-sm font-black text-rose-600" id="liveTotal">Rp 0</span>
-                    </div>
-                    <input type="file" id="pengeluaranFoto" class="w-full text-[9px] bg-slate-50 p-2 rounded-xl">
-                    <button onclick="saveTransaction('PENGELUARAN')" class="w-full bg-rose-600 text-white font-bold py-3 rounded-2xl text-[10px] uppercase shadow-md hover:bg-rose-700 transition">Posting Data</button>
+                    <div id="itemRows" class="space-y-1"></div>
+                    <div class="text-right font-black text-rose-600 text-xs" id="liveTotal">Rp 0</div>
+                    <input type="file" id="pengeluaranFoto" class="w-full text-[9px] border p-2 rounded-xl">
+                    <button onclick="saveTransaction('PENGELUARAN')" class="w-full bg-rose-600 text-white font-bold py-3 rounded-2xl text-[10px] uppercase">Posting</button>
                 </div>
             </div>
         </section>
 
-        <div class="bg-white rounded-[32px] shadow-xl overflow-hidden mb-10 border border-slate-100">
+        <div class="bg-white rounded-[32px] shadow-xl overflow-hidden mb-10">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-[10px]">
                     <thead class="bg-slate-50 text-slate-400 font-bold uppercase border-b">
-                        <tr>
-                            <th class="p-4 sticky-name">Nama Mahasiswa</th>
-                            <th class="px-1">APR</th><th class="px-1">MEI</th><th class="px-1">JUN</th>
-                            <th class="px-1">JUL</th><th class="px-1">AGU</th><th class="px-1">SEP</th>
-                            <th class="px-1">OKT</th><th class="px-1">NOV</th><th class="px-1">DES</th>
-                            <th class="px-4 text-center bg-rose-50 text-rose-600 font-black">TOTAL</th>
-                        </tr>
+                        <tr><th class="p-4 sticky-name">Mahasiswa</th><th>APR</th><th>MEI</th><th>JUN</th><th>JUL</th><th>AGU</th><th>SEP</th><th>OKT</th><th>NOV</th><th>DES</th><th class="p-4 text-center">TOTAL</th></tr>
                     </thead>
                     <tbody id="tableBody" class="divide-y divide-slate-100"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-[24px] shadow-xl overflow-hidden border border-slate-100 no-print">
-            <div class="p-4 bg-slate-900 text-white">
-                <h3 class="font-bold text-[10px] uppercase italic tracking-widest text-emerald-400">Log Transaksi Terakhir</h3>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-[10px]">
-                    <thead class="bg-slate-50 text-slate-400 font-bold border-b">
-                        <tr><th class="p-4">Tanggal</th><th>Keterangan</th><th>Tipe</th><th class="text-right">Nominal</th><th class="text-center">Lampiran</th></tr>
-                    </thead>
-                    <tbody id="transactionList" class="divide-y divide-slate-100"></tbody>
                 </table>
             </div>
         </div>
@@ -142,51 +153,29 @@
         const daftarMhs = ["EZIZA ZADA HULUL HUKAMA SUTRISNO", "FAKHRI AKBAR DHIYAUL HAQ", "FANI KRISTIYANTO", "FARIZ AQEELA HERYAWAN", "FARREL BINTANG PRADANA", "FASYA BAARIQ ARKAAN", "FATHAN KURNIAWAN", "GALIB AZFA RIFQI", "HABIBURRAHMAN AL ANAM", "HANIF ZULFIKAR ALSYAKUR", "HARYA LUTHFI RADITIYA ACHMAD", "HILDA DIANA", "IBRA AGUSTI DZUL FAQAR", "IDHAM ENDRISON", "IFAN CANDRA WIJAYA", "ISMAIL FAHMI HARIMURTI", "ISTIQOMAH KURNIA RAMADANI", "JORGEN TIMOTHY FRANKLIN KARUNDENG", "JOVIAN DWI RADITYAN", "KEIZA ENRIQU FAHREZA", "KRISANTIS ARIMA DEO", "LENNY RIZKY NUR AZIZAH", "LUTFIA AIMAN RIAN HIDAYAH", "MARIA ELISABETH NAHAK BRIA", "MARIANI AISYAH DINIAR", "MARSYA UKHROWINA AKHYARI", "MAULANA YUSRIL FAWAIZ"];
 
         let dbRaw = [];
-        let allTransactions = [];
+        let allTrans = [];
         let syncQueue = 0;
 
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
+        function showToast(m) { const t=document.getElementById('toast'); document.getElementById('toastMsg').innerText=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+        function toggleSync(s) { if(s) syncQueue++; else syncQueue--; document.getElementById('syncIcon').style.display = (syncQueue>0)?'block':'none'; }
 
-        function toggleSync(isSync) {
-            if(isSync) syncQueue++; else syncQueue--;
-            document.getElementById('syncIcon').style.display = (syncQueue > 0) ? 'block' : 'none';
-        }
-
-        async function login() {
-            if(document.getElementById('passInput').value === "12345678") {
-                localStorage.setItem("admin_aduwa", "true");
-                location.reload();
-            } else { alert("Sandi Salah!"); }
-        }
+        async function login() { if(document.getElementById('passInput').value==="12345678"){ localStorage.setItem("admin_aduwa","true"); location.reload(); } else alert("Salah!"); }
         function logout() { localStorage.removeItem("admin_aduwa"); location.reload(); }
 
-        // AUTO-SAVE CENTANG KAS
         async function silentSave(nama, bIdx, status) {
-            toggleSync(true);
-            updateLiveStats();
+            toggleSync(true); updateLiveStats();
             try {
-                const payload = { action: "UPDATE_CHECKBOX", nama: nama, colIndex: bIdx + 7, status: status };
-                await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload), mode: 'no-cors' });
-                showToast("Centang Tersimpan!");
-            } catch(e) { console.error(e); }
-            finally { toggleSync(false); }
+                const p = { action: "UPDATE_CHECKBOX", nama: nama, colIndex: bIdx + 7, status: status };
+                await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(p), mode: 'no-cors' });
+                showToast("Simpan!");
+            } catch(e) {} finally { toggleSync(false); }
         }
 
         async function loadData() {
-            try {
-                const res = await fetch(SCRIPT_URL);
-                const data = await res.json();
-                dbRaw = data;
-                allTransactions = data.filter(r => r[2] === "PEMASUKAN" || r[2] === "PENGELUARAN").map(r => ({
-                    tgl: r[0], ket: r[1], tipe: r[2], nom: r[3], bukti: r[4]
-                })).reverse();
-                render();
-            } catch (e) { console.error(e); }
+            const res = await fetch(SCRIPT_URL);
+            dbRaw = await res.json();
+            allTrans = dbRaw.filter(r => r[2] === "PEMASUKAN" || r[2] === "PENGELUARAN").map(r => ({ tgl: r[0], ket: r[1], tipe: r[2], nom: r[3], bukti: r[4] })).reverse();
+            render();
         }
 
         function render() {
@@ -198,106 +187,82 @@
             }
 
             const tb = document.getElementById('tableBody'); tb.innerHTML = "";
-            daftarMhs.forEach((nama) => {
-                const rowData = dbRaw.find(r => r[1] === nama) || [];
-                let r = `<tr class="border-b"><td class="p-4 sticky-name uppercase text-[9px] font-bold">${nama}</td>`;
-                let mCount = 0;
-                bulanArr.forEach((bl, bIdx) => {
-                    const isLunas = rowData[bIdx + 6] === "LUNAS";
-                    if(isLunas) mCount++;
-                    r += `<td class="text-center">
-                            <input type="checkbox" onchange="silentSave('${nama}', ${bIdx}, this.checked)" ${isLunas?'checked':''} ${isAdmin?'':'disabled'}>
-                          </td>`;
+            const pLog = document.getElementById('printLogBody'); pLog.innerHTML = "";
+            
+            // WEB TABLE
+            daftarMhs.forEach(nama => {
+                const row = dbRaw.find(r => r[1] === nama) || [];
+                let r = `<tr class="border-b"><td class="p-4 sticky-name uppercase text-[9px]">${nama}</td>`;
+                let count = 0;
+                bulanArr.forEach((b, i) => {
+                    const isL = row[i+6] === "LUNAS";
+                    if(isL) count++;
+                    r += `<td class="text-center"><input type="checkbox" onchange="silentSave('${nama}',${i},this.checked)" ${isL?'checked':''} ${isAdmin?'':'disabled'}></td>`;
                 });
-                r += `<td class="text-center font-black text-rose-600 bg-rose-50/50">Rp ${(mCount * NOMINAL_KAS).toLocaleString()}</td></tr>`;
+                r += `<td class="text-center font-bold text-rose-600">Rp ${(count*NOMINAL_KAS).toLocaleString()}</td></tr>`;
                 tb.innerHTML += r;
             });
 
-            const list = document.getElementById('transactionList'); list.innerHTML = "";
-            allTransactions.forEach(t => {
-                const d = new Date(t.tgl);
-                list.innerHTML += `<tr class="border-b">
-                    <td class="p-4 font-bold text-slate-400 text-[9px]">${d.toLocaleDateString('id-ID')}</td>
-                    <td class="font-bold uppercase text-slate-700">${t.ket}</td>
-                    <td><span class="px-2 py-1 rounded-full font-black text-[8px] ${t.tipe==='PEMASUKAN'?'bg-blue-100 text-blue-600':'bg-rose-100 text-rose-600'}">${t.tipe}</span></td>
-                    <td class="text-right font-black">Rp ${Number(t.nom).toLocaleString()}</td>
-                    <td class="text-center">${t.bukti!=='#'?`<button onclick="window.open().document.write('<img src=${t.bukti} style=max-width:100%>')" class="text-blue-500 underline font-bold">NOTA</button>`:'-'}</td>
+            // PRINT LOG TABLE
+            allTrans.forEach(t => {
+                const d = new Date(t.tgl).toLocaleDateString('id-ID');
+                pLog.innerHTML += `<tr>
+                    <td>${d}</td>
+                    <td>${t.ket}</td>
+                    <td>${t.tipe}</td>
+                    <td style="text-align:right">Rp ${Number(t.nom).toLocaleString()}</td>
+                    <td>${t.bukti!=='#'?`<img src="${t.bukti}" class="nota-img">`:'-'}</td>
                 </tr>`;
             });
+
+            // COPY TABLE FOR PRINT
+            document.getElementById('printTableKas').innerHTML = document.querySelector('table').innerHTML;
+            document.getElementById('currentDate').innerText = new Date().toLocaleString('id-ID');
             updateLiveStats();
         }
 
         function updateLiveStats() {
-            let grandKas = document.querySelectorAll('input[type="checkbox"]:checked').length * NOMINAL_KAS;
-            let tMasuk = 0, tKeluar = 0;
-            allTransactions.forEach(t => {
-                const n = Number(t.nom) || 0;
-                if(t.tipe === 'PEMASUKAN') tMasuk += n; else tKeluar += n;
-            });
-            document.getElementById('statKas').innerText = `Rp ${grandKas.toLocaleString()}`;
-            document.getElementById('statMasuk').innerText = `Rp ${tMasuk.toLocaleString()}`;
-            document.getElementById('statKeluar').innerText = `Rp ${tKeluar.toLocaleString()}`;
-            document.getElementById('statTotal').innerText = `Rp ${(grandKas + tMasuk - tKeluar).toLocaleString()}`;
+            let kas = document.querySelectorAll('input[type="checkbox"]:checked').length * NOMINAL_KAS;
+            let msk = 0, klr = 0;
+            allTrans.forEach(t => { if(t.tipe==='PEMASUKAN') msk += Number(t.nom); else klr += Number(t.nom); });
+            
+            const stats = [`Rp ${kas.toLocaleString()}`, `Rp ${msk.toLocaleString()}`, `Rp ${klr.toLocaleString()}`, `Rp ${(kas+msk-klr).toLocaleString()}`];
+            ['statKas','statMasuk','statKeluar','statTotal'].forEach((id,i) => document.getElementById(id).innerText = stats[i]);
+            ['pKas','pMasuk','pKeluar','pTotal'].forEach((id,i) => document.getElementById(id).innerText = stats[i]);
         }
 
-        // AUTO-SAVE SILENT UNTUK PEMASUKAN & PENGELUARAN
         async function saveTransaction(tipe) {
-            let ket = "", total = 0, img = "#";
-            
-            // Ambil Data Berdasarkan Tipe
-            if(tipe === 'PEMASUKAN') {
-                ket = document.getElementById('InKet').value;
-                total = document.getElementById('InNom').value;
-            } else {
-                const ns = document.querySelectorAll('.item-name'), qs = document.querySelectorAll('.item-qty'), ps = document.querySelectorAll('.item-price');
-                let list = []; ns.forEach((n, i) => { if(n.value){ list.push(`${n.value}(${qs[i].value}x)`); total += (qs[i].value * ps[i].value); }});
-                ket = list.join(", ");
-                const f = document.getElementById('pengeluaranFoto').files[0];
-                if(f) img = await new Promise(res => { const fr = new FileReader(); fr.onload=e=>res(e.target.result); fr.readAsDataURL(f); });
+            let ket="", nom=0, img="#";
+            if(tipe==='PEMASUKAN'){ ket=document.getElementById('InKet').value; nom=document.getElementById('InNom').value; }
+            else {
+                const ns=document.querySelectorAll('.item-name'), qs=document.querySelectorAll('.item-qty'), ps=document.querySelectorAll('.item-price');
+                let l=[]; ns.forEach((n,i)=>{ if(n.value){ l.push(`${n.value}(${qs[i].value}x)`); nom+=(qs[i].value*ps[i].value); }});
+                ket=l.join(", ");
+                const f=document.getElementById('pengeluaranFoto').files[0];
+                if(f) img=await new Promise(res=>{ const fr=new FileReader(); fr.onload=e=>res(e.target.result); fr.readAsDataURL(f); });
             }
-
-            // Validasi
-            if(!ket || total <= 0) { alert("Lengkapi data dulu!"); return; }
-
-            // RESET FORM LANGSUNG (Biar Marsya bisa lanjut input lain)
-            if(tipe === 'PEMASUKAN') {
-                document.getElementById('InKet').value = ""; document.getElementById('InNom').value = "";
-            } else {
-                document.getElementById('itemCount').value = ""; 
-                document.getElementById('itemInputsContainer').classList.add('hidden');
-                document.getElementById('pengeluaranFoto').value = "";
-            }
+            if(!ket || nom<=0) return alert("Isi data!");
             
-            // Mulai Kirim Background
+            // RESET & NOTIF
+            if(tipe==='PEMASUKAN'){ document.getElementById('InKet').value=""; document.getElementById('InNom').value=""; }
+            else { document.getElementById('itemCount').value=""; document.getElementById('itemInputsContainer').classList.add('hidden'); }
+            
             toggleSync(true);
             try {
-                const p = { tgl: new Date().toISOString(), ket: ket.toUpperCase(), tipe: tipe, nom: total, bukti: img };
+                const p = { tgl: new Date().toISOString(), ket: ket.toUpperCase(), tipe: tipe, nom: nom, bukti: img };
                 await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(p), mode: 'no-cors' });
-                
-                showToast(tipe + " Terkirim!");
-                // Tarik data baru di background
-                setTimeout(loadData, 2000); 
-            } catch(e) { 
-                alert("Koneksi Gagal, Data tidak terkirim!"); 
-            } finally { 
-                toggleSync(false); 
-            }
+                showToast("Berhasil!"); setTimeout(loadData, 2000);
+            } catch(e){} finally { toggleSync(false); }
         }
 
         function generateItemInputs() {
             const c = document.getElementById('itemCount').value || 1;
             const r = document.getElementById('itemRows'); r.innerHTML = "";
-            for(let i=0; i<c; i++) {
-                r.innerHTML += `<div class="grid grid-cols-5 gap-1 mb-2"><input type="text" class="input-clean item-name col-span-2" placeholder="Barang"><input type="number" class="input-clean item-qty text-center" value="1" oninput="calcTotal()"><input type="number" class="input-clean item-price col-span-2" placeholder="Harga" oninput="calcTotal()" onblur="autoKilo(this)"></div>`;
-            }
+            for(let i=0; i<c; i++) r.innerHTML += `<div class="grid grid-cols-5 gap-1"><input type="text" class="input-clean item-name col-span-2" placeholder="Item"><input type="number" class="input-clean item-qty text-center" value="1" oninput="calcTotal()"><input type="number" class="input-clean item-price col-span-2" placeholder="Harga" oninput="calcTotal()" onblur="autoKilo(this)"></div>`;
             document.getElementById('itemInputsContainer').classList.remove('hidden');
         }
-        function calcTotal() {
-            let t = 0; const qs = document.querySelectorAll('.item-qty'), ps = document.querySelectorAll('.item-price');
-            qs.forEach((q, i) => t += (q.value * ps[i].value));
-            document.getElementById('liveTotal').innerText = `Rp ${t.toLocaleString()}`;
-        }
-        function autoKilo(el) { if(el.value > 0 && el.value < 1000) el.value = el.value * 1000; calcTotal(); }
+        function calcTotal() { let t=0; const qs=document.querySelectorAll('.item-qty'), ps=document.querySelectorAll('.item-price'); qs.forEach((q,i)=>t+=(q.value*ps[i].value)); document.getElementById('liveTotal').innerText=`Rp ${t.toLocaleString()}`; }
+        function autoKilo(el) { if(el.value>0 && el.value<1000) el.value=el.value*1000; calcTotal(); }
 
         window.onload = loadData;
     </script>
